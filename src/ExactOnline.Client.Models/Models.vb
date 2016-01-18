@@ -3261,7 +3261,7 @@ Public Class ItemGroup
 End Class
 
 <SupportedActionsSDK(False, True, False, False)>
-<DataServiceKey("ItemId")>
+<DataServiceKey("ID")>
 Public Class ItemVersion
 	'''<![CDATA[Batch Quantity of Item Version]]>
 	Public Property [BatchQuantity] As Double?

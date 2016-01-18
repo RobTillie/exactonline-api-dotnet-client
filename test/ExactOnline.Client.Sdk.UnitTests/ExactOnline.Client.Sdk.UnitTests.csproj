@@ -86,10 +86,6 @@
     <Content Include="Json\Response_Json_Object_SalesInvoice.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\src\ExactOnline.Client.Models\ExactOnline.Client.Models.vbproj">
-      <Project>{bd9a83f1-1106-45bb-bcba-a54d6c213fdc}</Project>
-      <Name>ExactOnline.Client.Models</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\src\ExactOnline.Client.Sdk\ExactOnline.Client.Sdk.csproj">
       <Project>{ee442aa1-c51a-4531-92da-a7d9c7b73973}</Project>
       <Name>ExactOnline.Client.Sdk</Name>
