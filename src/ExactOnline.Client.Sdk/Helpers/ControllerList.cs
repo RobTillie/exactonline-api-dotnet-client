@@ -1,5 +1,6 @@
 ﻿using System;
-using System.Collections;
+using System.Collections.Generic;
+using System.Reflection;
 using ExactOnline.Client.Sdk.Controllers;
 using ExactOnline.Client.Sdk.Interfaces;
 
@@ -16,14 +17,14 @@ namespace ExactOnline.Client.Sdk.Helpers
 	{
 		private readonly IApiConnector _connector;
 		private readonly string _baseUrl;
-		private readonly Hashtable _controllers;
+		private readonly Dictionary<string, object> _controllers;
 		private Dictionary<string, string> _services;
 
 		public ControllerList(IApiConnector connector, string baseUrl)
 		{
 			_baseUrl = baseUrl;
 			_connector = connector;
-			_controllers = new Hashtable();
+			_controllers = new Dictionary<string, object>();
 			_services = new Services().Services;
 		}
 
@@ -44,7 +45,7 @@ namespace ExactOnline.Client.Sdk.Helpers
 		/// </summary>
 		public IEntityManager GetEntityManager(Type type)
 		{
-			var method = typeof(ControllerList).GetMethod("GetController");
+			var method = typeof(ControllerList).GetTypeInfo().GetDeclaredMethod("GetController");
 			var genericMethod = method.MakeGenericMethod(new[] { type });
 			var controller = (IEntityManager)genericMethod.Invoke(this, null);
 			return controller;

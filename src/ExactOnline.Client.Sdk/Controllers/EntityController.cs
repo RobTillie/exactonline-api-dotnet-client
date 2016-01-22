@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Reflection;
 using ExactOnline.Client.Sdk.Delegates;
 using ExactOnline.Client.Sdk.Helpers;
 using ExactOnline.Client.Sdk.Interfaces;
@@ -43,9 +44,9 @@ namespace ExactOnline.Client.Sdk.Controllers
 		public Boolean IsUpdated(object entity)
 		{
 			Boolean isUpdated = false;
-			foreach (var pi in entity.GetType().GetProperties())
+			foreach (var pi in entity.GetType().GetRuntimeProperties())
 			{
-				var originalvalue = OriginalEntity.GetType().GetProperty(pi.Name).GetValue(OriginalEntity);
+				var originalvalue = OriginalEntity.GetType().GetRuntimeProperty(pi.Name).GetValue(OriginalEntity);
 				var currentvalue = pi.GetValue(entity);
 
 				if (originalvalue == null) originalvalue = "null"; 
@@ -62,10 +63,10 @@ namespace ExactOnline.Client.Sdk.Controllers
 		private static object Clone(object entity)
 		{
 			object returnEntity = Activator.CreateInstance(entity.GetType(), null);
-			foreach (var property in entity.GetType().GetProperties())
+			foreach (var property in entity.GetType().GetRuntimeProperties())
 			{
 				var value = property.GetValue(entity);
-				if (value != null && value.GetType().IsGenericType && value is IEnumerable)
+				if (value != null && value.GetType().GetTypeInfo().IsGenericType && value is IEnumerable)
 				{
 					// Create linked entity
 					var newValue = (IList)Activator.CreateInstance(value.GetType());
@@ -76,7 +77,7 @@ namespace ExactOnline.Client.Sdk.Controllers
 					}
 					value = newValue;
 				}
-				returnEntity.GetType().GetProperty(property.Name).SetValue(returnEntity, value);
+				returnEntity.GetType().GetRuntimeProperty(property.Name).SetValue(returnEntity, value);
 			}
 			return returnEntity;
 		}

@@ -34,16 +34,15 @@ namespace ExactOnline.Client.Sdk.Helpers
 		/// </summary>
 		public List<dynamic> ConvertJsonToDynamicObjectList(string json)
 		{
-			try
-			{
-				JArray x = JsonConvert.DeserializeObject<dynamic>(json);
-				List<dynamic> list = x.ToList<dynamic>();
-				return list;
-			}
-			catch
-			{
-				throw new IncorrectJsonException();
-			}
+            try
+            {
+                JArray x = JsonConvert.DeserializeObject<dynamic>(json);
+                return x.ToObject<List<dynamic>>();
+            }
+            catch
+            {
+                throw new IncorrectJsonException();
+            }
 		}
 
 		/// <summary>

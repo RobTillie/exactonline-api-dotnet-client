@@ -13,12 +13,7 @@ Imports System.Runtime.InteropServices
 <Assembly: AssemblyCompany("")> 
 <Assembly: AssemblyProduct("Exact Online Client SDK")> 
 <Assembly: AssemblyCopyright("")> 
-<Assembly: AssemblyTrademark("")> 
-
-<Assembly: ComVisible(False)>
-
-'The following GUID is for the ID of the typelib if this project is exposed to COM
-<Assembly: Guid("7c0090a0-5ac0-4699-bec6-10f6167471f5")> 
+<Assembly: AssemblyTrademark("")>
 
 ' Version information for an assembly consists of the following four values:
 '

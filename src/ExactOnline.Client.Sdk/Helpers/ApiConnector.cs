@@ -47,7 +47,7 @@ namespace ExactOnline.Client.Sdk.Helpers
 		{
 			if (string.IsNullOrEmpty(endpoint)) throw new ArgumentException("Cannot perform request with empty endpoint");
 
-			var request = CreateRequest(endpoint, oDataQuery, RequestTypeEnum.GET);
+			var request = CreateRequest(endpoint, oDataQuery, HttpMethod.Get);
 
 			return GetResponse(request);
 		}
@@ -62,25 +62,15 @@ namespace ExactOnline.Client.Sdk.Helpers
 		{
 			if (string.IsNullOrEmpty(endpoint) || string.IsNullOrEmpty(postdata)) throw new ArgumentException("Cannot perform request with empty endpoint or postdata");
 
-			var request = CreateRequest(endpoint, null, RequestTypeEnum.POST);
+            // Add POST data to the request
+            if (string.IsNullOrEmpty(postdata))
+            {
+                // Post request needs data
+                throw new BadRequestException();
+            }
 
-			// Add POST data to the request
-			if (!string.IsNullOrEmpty(postdata))
-			{
-				var bytes = Encoding.GetEncoding("utf-8").GetBytes(postdata);
-				request.ContentLength = bytes.Length;
-
-				using (var writeStream = request.GetRequestStream())
-				{
-					writeStream.Write(bytes, 0, bytes.Length);
-				}
-			}
-			else
-			{
-				throw new BadRequestException(); // Post request needs data
-			}
-
-			return GetResponse(request);
+            var request = CreateRequest(endpoint, null, HttpMethod.Put, postdata);
+            return GetResponse(request);
 		}
 
 		/// <summary>
@@ -93,23 +83,13 @@ namespace ExactOnline.Client.Sdk.Helpers
 		{
 			if (string.IsNullOrEmpty(endpoint) || string.IsNullOrEmpty(putData)) throw new ArgumentException("Cannot perform request with empty endpoint or putData");
 
-			var request = CreateRequest(endpoint, null, RequestTypeEnum.PUT);
+            if (string.IsNullOrEmpty(putData))
+            {
+                // Post request needs data
+                throw new BadRequestException();
+            }
 
-			if (!string.IsNullOrEmpty(putData))
-			{
-				var bytes = Encoding.GetEncoding("utf-8").GetBytes(putData);
-				request.ContentLength = bytes.Length;
-
-				using (var writeStream = request.GetRequestStream())
-				{
-					writeStream.Write(bytes, 0, bytes.Length);
-				}
-			}
-			else
-			{
-				// Post request needs data
-				throw new BadRequestException();
-			}
+            var request = CreateRequest(endpoint, null, HttpMethod.Put, putData);
 			return GetResponse(request);
 		}
 
@@ -122,7 +102,7 @@ namespace ExactOnline.Client.Sdk.Helpers
 		{
 			if (string.IsNullOrEmpty(endpoint)) throw new ArgumentException("Cannot perform request with empty endpoint");
 
-			var request = CreateRequest(endpoint, null, RequestTypeEnum.DELETE);
+			var request = CreateRequest(endpoint, null, HttpMethod.Delete);
 
 			return GetResponse(request);
 		}
@@ -134,11 +114,8 @@ namespace ExactOnline.Client.Sdk.Helpers
 		/// <returns></returns>
 		public string DoCleanRequest(string uri) // Build for doing $count function
 		{
-			var request = (HttpWebRequest)WebRequest.Create(uri);
-			request.Method = RequestTypeEnum.GET.ToString();
-			request.ContentType = "application/json";
-			request.Headers.Add("Authorization", "Bearer " + _accessTokenDelegate());
-			return GetResponse(request);
+            var request = CreateRequest(uri, null, HttpMethod.Get);
+			return GetResponse(request, false);
 		}
 
 		public int GetCurrentDivision(string website)
@@ -146,7 +123,7 @@ namespace ExactOnline.Client.Sdk.Helpers
 			var url = website + "/api/v1/current/Me" ;
 			const string oDataQuery = "$select=CurrentDivision";
 			
-			var request = CreateRequest(url, oDataQuery, RequestTypeEnum.GET);
+			var request = CreateRequest(url, oDataQuery, HttpMethod.Get);
 			var response = GetResponse(request);
 			var jsonObject = JsonConvert.DeserializeObject<dynamic>(response);
 			
@@ -157,18 +134,16 @@ namespace ExactOnline.Client.Sdk.Helpers
 
 		#region Private methods
 
-		private HttpWebRequest CreateRequest(string url, string oDataQuery, RequestTypeEnum method)
+		private HttpRequestMessage CreateRequest(string url, string oDataQuery, HttpMethod method, string contentData = "")
 		{
 			if (!string.IsNullOrEmpty(oDataQuery))
 			{
 				url += "?" + oDataQuery;
 			}
 
-			var request = (HttpWebRequest)WebRequest.Create(url);
-			request.Method = method.ToString();
-			request.ContentType = "application/json";
-			request.Accept = "application/json";
+            var request = new HttpRequestMessage(method, url);
 			request.Headers.Add("Authorization", "Bearer " + _accessTokenDelegate());
+            request.Content = new StringContent(contentData, Encoding.UTF8, "application/json");
 
 			Debug.WriteLine(request.Method);
 			Debug.WriteLine(url);
@@ -176,28 +151,28 @@ namespace ExactOnline.Client.Sdk.Helpers
 			return request;
 		}
 
-		private string GetResponse(HttpWebRequest request)
+		private string GetResponse(HttpRequestMessage request, bool addAcceptHeader = true)
 		{
 			// Grab the response
 			var responseValue = string.Empty;
+            HttpResponseMessage response = null;
 
 			// Get response. If this fails: Throw the correct Exception (for testability)
 			try
 			{
-				WebResponse response = request.GetResponse();
-				using (Stream responseStream = response.GetResponseStream())
-				{
-					if (responseStream != null)
-					{
-						var reader = new StreamReader(responseStream);
-						responseValue = reader.ReadToEnd();
-					}
-				}
-			}
-            catch (WebException ex)
-			{
-				var statusCode = (((HttpWebResponse)ex.Response).StatusCode);
+                var client = new HttpClient();
 
+                if(addAcceptHeader)
+                    client.DefaultRequestHeaders.Add("Accept", "application/json");
+
+                // TODO: we could make this async
+                response = client.SendAsync(request).Result;
+                responseValue = response.Content.ReadAsStringAsync().Result;
+                response.EnsureSuccessStatusCode();
+			}
+            catch (HttpRequestException ex)
+			{
+                var statusCode = response.StatusCode;
 				Debug.WriteLine(ex.Message);
 
 				switch (statusCode)
@@ -215,7 +190,7 @@ namespace ExactOnline.Client.Sdk.Helpers
                         throw new NotFoundException(ex.Message, ex); // 404
 
 					case HttpStatusCode.InternalServerError: // 500
-                        throw new InternalServerErrorException(GetInternalServerErrorMessage(ex), ex);
+                        throw new InternalServerErrorException(GetInternalServerErrorMessage(response), ex);
 
 					case HttpStatusCode.MethodNotAllowed: // 405
 						throw new BadRequestException(ex.Message, ex);
@@ -229,9 +204,9 @@ namespace ExactOnline.Client.Sdk.Helpers
 			return responseValue;
 		}
 
-        private static string GetInternalServerErrorMessage(WebException ex)
+        private static string GetInternalServerErrorMessage(HttpResponseMessage response)
         {
-            var errorMessage = new StreamReader(ex.Response.GetResponseStream()).ReadToEnd();
+            var errorMessage = response.Content.ReadAsStringAsync().Result;
 
             try
             {
@@ -240,7 +215,7 @@ namespace ExactOnline.Client.Sdk.Helpers
             }
             catch
             {
-                return ex.Message;
+                return errorMessage;
             }
         }
 

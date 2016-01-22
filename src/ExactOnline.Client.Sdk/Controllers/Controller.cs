@@ -19,7 +19,7 @@ namespace ExactOnline.Client.Sdk.Controllers
 	{
 		private readonly GetEntityController _entityControllerDelegate;
 		public ManagerForEntity GetManagerForEntity;
-		private readonly Hashtable _entityControllers;
+		private readonly Dictionary<string, object> _entityControllers;
 		private readonly IApiConnection _conn;
 		private readonly string _keyname;
 		private string _expandfield;
@@ -32,12 +32,12 @@ namespace ExactOnline.Client.Sdk.Controllers
 			if (conn == null) { throw new ArgumentException("Instance of type APIConnection cannot be null"); }
 
 			// Instantiate the class variables
-			_entityControllers = new Hashtable();
+			_entityControllers = new Dictionary<string, object>();
 			_conn = conn;
 
-			// Set keyname of the entity (name of the field that is used to identify)
-			var attributes = Attribute.GetCustomAttributes(typeof(T)).Where(x => x.GetType() == typeof(DataServiceKey)).Select(a => a); //DataServiceKey
-
+            // Set keyname of the entity (name of the field that is used to identify)
+            var attributes = typeof(T).GetTypeInfo().GetCustomAttributes().Where(x => x.GetType() == typeof(DataServiceKey)).Select(a => a); //DataServiceKey
+            
 			// Find unique value of entity
 			var enumerable = attributes as IList<Attribute> ?? attributes.ToList();
 			if (!enumerable.Any())
@@ -54,7 +54,7 @@ namespace ExactOnline.Client.Sdk.Controllers
 		/// </summary>
 		public Boolean IsManagedEntity(object entity)
 		{
-			return _entityControllers.Contains(GetIdentifierValue(entity));
+			return _entityControllers.ContainsKey(GetIdentifierValue(entity));
 		}
 
 		/// <summary>
@@ -85,9 +85,7 @@ namespace ExactOnline.Client.Sdk.Controllers
 				AddEntityToManagedEntitiesCollection(entity);
 			}
 
-			// Convert list
-			var returnList = entities.ConvertAll(x => x);
-			return returnList;
+            return entities;
 		}
 
 		/// <summary>
@@ -98,8 +96,9 @@ namespace ExactOnline.Client.Sdk.Controllers
 		/// <returns>Entity if exists. Null if entity not exists.</returns>
 		public T GetEntity(string guid, string parameters)
 		{
-			if (guid.Contains('}') || guid.Contains('{'))
-			{
+			if (guid.Contains("}") || guid.Contains("{"))
+
+            {
 				throw new Exception("Bad Guid: Guid cannot contain '}' or '{'");
 			}
 
@@ -116,7 +115,7 @@ namespace ExactOnline.Client.Sdk.Controllers
 
 		private Boolean IsCreateable(T entity)
 		{
-			var actions = (SupportedActionsSDK)entity.GetType().GetCustomAttribute(typeof(SupportedActionsSDK));
+            var actions = (SupportedActionsSDK)typeof(T).GetTypeInfo().GetCustomAttribute(typeof(SupportedActionsSDK));
 			if (actions != null)
 			{
 				return actions.CanCreate;
@@ -164,7 +163,7 @@ namespace ExactOnline.Client.Sdk.Controllers
 
 		private Boolean IsUpdateable(T entity)
 		{
-			var actions = (SupportedActionsSDK)entity.GetType().GetCustomAttribute(typeof(SupportedActionsSDK));
+			var actions = (SupportedActionsSDK)typeof(T).GetTypeInfo().GetCustomAttribute(typeof(SupportedActionsSDK));
 			if (actions != null)
 			{
 				return actions.CanUpdate;
@@ -195,7 +194,7 @@ namespace ExactOnline.Client.Sdk.Controllers
 
 		private Boolean IsDeleteable(T entity)
 		{
-			var actions = (SupportedActionsSDK)entity.GetType().GetCustomAttribute(typeof(SupportedActionsSDK));
+			var actions = (SupportedActionsSDK)typeof(T).GetTypeInfo().GetCustomAttribute(typeof(SupportedActionsSDK));
 			if (actions != null)
 			{
 				return actions.CanDelete;
@@ -241,7 +240,7 @@ namespace ExactOnline.Client.Sdk.Controllers
 				throw new Exception("Currently the SDK doesn't support entities with a compound key.");				
 			}
 
-			return entity.GetType().GetProperty(_keyname).GetValue(entity).ToString();
+			return entity.GetType().GetRuntimeProperty(_keyname).GetValue(entity).ToString();
 		}		
 
 		/// <summary>
@@ -251,7 +250,7 @@ namespace ExactOnline.Client.Sdk.Controllers
 		{
 			var returnValue = false;
 			var entityIdentifier = GetIdentifierValue(entity);
-			if (!_entityControllers.Contains(entityIdentifier))
+			if (!_entityControllers.ContainsKey(entityIdentifier))
 			{
 				var newController = new EntityController(entity, _keyname, GetIdentifierValue(entity), _conn, _entityControllerDelegate);
 				_entityControllers.Add(entityIdentifier, newController);
@@ -259,7 +258,7 @@ namespace ExactOnline.Client.Sdk.Controllers
 				returnValue = true;
 
 				// Get linked entity fields
-				var linkedEntityFields = from property in entity.GetType().GetProperties()
+				var linkedEntityFields = from property in entity.GetType().GetRuntimeProperties()
 				                         let ns = property.GetValue(entity) == null ? null : property.GetValue(entity).GetType().Namespace
 				                         where ns != null && ((property.GetValue(entity) != null)
 										 && (ns.Contains("System.Collections.Generic")))

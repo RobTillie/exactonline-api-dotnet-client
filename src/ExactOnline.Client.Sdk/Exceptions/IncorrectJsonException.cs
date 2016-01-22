@@ -1,8 +1,9 @@
 ﻿using System;
+using System.Runtime.Serialization;
 
 namespace ExactOnline.Client.Sdk.Exceptions
 {
-	[Serializable]
+	[DataContract]
 	public class IncorrectJsonException : Exception
 	{
 		public IncorrectJsonException()

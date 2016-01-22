@@ -2,7 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web.Script.Serialization;
 using ExactOnline.Client.Sdk.Exceptions;
 using Newtonsoft.Json;
 
@@ -22,13 +21,9 @@ namespace ExactOnline.Client.Sdk.Helpers
 		/// <returns></returns>
 		public static string GetJsonObject(string response)
 		{
-			var serializer = new JavaScriptSerializer();
-			serializer.RegisterConverters(new JavaScriptConverter[] { new JssDateTimeConverter() });
-			var dict = (Dictionary<string, object>)serializer.Deserialize<object>(response);
-
-			var d = (Dictionary<string, object>)dict["d"];
-			string output = GetJsonFromDictionary(d);
-			return output;
+            var dict = JsonConvert.DeserializeObject<Dictionary<string,object>>(response);
+            var d = (Dictionary<string, object>)dict["d"];
+            return GetJsonFromDictionary(d);
 		}
 
 		/// <summary>
@@ -36,21 +31,19 @@ namespace ExactOnline.Client.Sdk.Helpers
 		/// </summary>
 		public static string GetJsonArray(string response)
 		{
-			var serializer = new JavaScriptSerializer();
-			serializer.RegisterConverters(new JavaScriptConverter[] { new JssDateTimeConverter() });
 			try
 			{
-				ArrayList results;
-				var dict = (Dictionary<string, object>)serializer.Deserialize<object>(response);
-				var innerPart = dict["d"];
+				IList results;
+				var dict = JsonConvert.DeserializeObject<Dictionary<string, object>>(response);
+                var innerPart = dict["d"];
 				if (innerPart.GetType() == typeof(Dictionary<string, object>))
 				{
 					var d = (Dictionary<string, object>)dict["d"];
-					results = (ArrayList)d["results"];
+					results = (IList)d["results"];
 				}
 				else
 				{
-					results = (ArrayList)innerPart;
+					results = (IList)innerPart;
 				}
 				return GetJsonFromResultDictionary(results);
 			}
@@ -94,7 +87,7 @@ namespace ExactOnline.Client.Sdk.Helpers
 					var subcollection = (Dictionary<string, object>)entry.Value;
 					if (subcollection.Keys.Contains("results"))
 					{
-						var results = (ArrayList)subcollection["results"];
+						var results = (IList)subcollection["results"];
 						string subjson = GetJsonFromResultDictionary(results);
 						if (subjson.Length > 0)
 						{
@@ -112,7 +105,7 @@ namespace ExactOnline.Client.Sdk.Helpers
 			return json;
 		}
 
-		private static string GetJsonFromResultDictionary(ArrayList results)
+		private static string GetJsonFromResultDictionary(IList results)
 		{
 			string json = "[";
 			if (results != null && results.Count > 0)

@@ -1,16 +1,13 @@
 ﻿using System;
+using System.Runtime.Serialization;
 
 namespace ExactOnline.Client.Sdk.Exceptions
 {
-    [Serializable]
+    [DataContract]
     public class BadRequestException : Exception // HTTP: 400
     {
         public BadRequestException() { }
         public BadRequestException(string message) : base(message) { }
         public BadRequestException(string message, Exception inner) : base(message, inner) { }
-        protected BadRequestException(
-          System.Runtime.Serialization.SerializationInfo info,
-          System.Runtime.Serialization.StreamingContext context)
-            : base(info, context) { }
     }
 }

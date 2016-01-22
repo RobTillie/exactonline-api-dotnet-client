@@ -94,7 +94,7 @@ namespace ExactOnline.Client.Sdk.Helpers
 		{
 			Boolean returnValue = false;
 
-			var originalvalue = _originalEntity.GetType().GetProperty(pi.Name).GetValue(_originalEntity);
+			var originalvalue = _originalEntity.GetType().GetRuntimeProperty(pi.Name).GetValue(_originalEntity);
 			var currentvalue = pi.GetValue(objectToConvert);
 
 			if (originalvalue == null) originalvalue = "null";
@@ -176,7 +176,7 @@ namespace ExactOnline.Client.Sdk.Helpers
 
 		private PropertyInfo[] GetWriteableFields(object value, Boolean jsonForUpdate)
 		{
-			PropertyInfo[] writeableFields = value.GetType().GetProperties().Where(IsWriteField).ToArray();
+			PropertyInfo[] writeableFields = value.GetType().GetRuntimeProperties().Where(IsWriteField).ToArray();
 
 			if (jsonForUpdate)
 			{
@@ -192,7 +192,7 @@ namespace ExactOnline.Client.Sdk.Helpers
 		private IEnumerable<PropertyInfo> GetUpdatedFields(PropertyInfo[] writeableFields, object value)
 		{
 			// Check if this is an object where only the json for updated fields have to be created
-			writeableFields = value.GetType().GetProperties().Where(property => IsUpdatedField(value, property)).ToArray();
+			writeableFields = value.GetType().GetRuntimeProperties().Where(property => IsUpdatedField(value, property)).ToArray();
 			return writeableFields;
 		}
 
@@ -217,7 +217,7 @@ namespace ExactOnline.Client.Sdk.Helpers
 				object fieldValue = field.GetValue(value);
 				fieldValue = CheckDateFormat(fieldValue);
 
-				if (fieldValue != null && fieldValue.GetType().IsGenericType && fieldValue is IEnumerable)
+				if (fieldValue != null && fieldValue.GetType().GetTypeInfo().IsGenericType && fieldValue is IEnumerable)
 				{
 					// Write property value for linked entities
 					WriteLinkedEntities(writer, fieldName, (IEnumerable)fieldValue);
