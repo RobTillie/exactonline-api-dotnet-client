@@ -26,10 +26,10 @@ namespace ExactOnline.Client.Sdk.Controllers
 		public List<dynamic> GetDynamic(string query)
 		{
 			string response = _conn.Get(query);
-			response = ApiResponseCleaner.GetJsonArray(response);
+            var jsonObject = ApiResponseCleaner.GetJsonArray(response);
 
 			var converter = new EntityConverter();
-			List<dynamic> list = converter.ConvertJsonToDynamicObjectList(response);
+			List<dynamic> list = converter.ConvertJsonToDynamicObjectList(jsonObject);
 			return list;
 		}
 

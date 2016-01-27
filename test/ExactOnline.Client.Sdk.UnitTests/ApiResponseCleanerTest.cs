@@ -2,6 +2,8 @@
 using ExactOnline.Client.Sdk.Helpers;
 using ExactOnline.Client.Sdk.UnitTests.Tools;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 
 namespace ExactOnline.Client.Sdk.UnitTests
@@ -21,7 +23,7 @@ namespace ExactOnline.Client.Sdk.UnitTests
 		[TestMethod]
 		public void ApiResponseCleaner_FetchJsonArray_WithCorrectValues_Succeeds()
 		{
-			string jsonarray = ApiResponseCleaner.GetJsonArray(JsonFileReader.GetJsonFromFile("ApiResponse_Json_Array.txt"));
+			var jsonarray = ApiResponseCleaner.GetJsonArray(JsonFileReader.GetJsonFromFile("ApiResponse_Json_Array.txt"));
 		}
 
 		[TestCategory("Unit Test")]
@@ -42,9 +44,10 @@ namespace ExactOnline.Client.Sdk.UnitTests
 		[TestMethod]
 		public void ApiResponseCleanerFetchJsonArrayWithEmptyLinkedEntitiesSucceeds()
 		{
-			const string expected = @"[{""BankAccounts"":[]}]";
-			string clean = ApiResponseCleaner.GetJsonArray(JsonFileReader.GetJsonFromFile("ApiResponse_Json_Array_WithEmptyLinkedEntities.txt"));
-			Assert.AreEqual(expected, clean);
+			const string expectedJson = @"[{""BankAccounts"":[]}]";
+            var clean = ApiResponseCleaner.GetJsonArray(JsonFileReader.GetJsonFromFile("ApiResponse_Json_Array_WithEmptyLinkedEntities.txt"));
+            var expected = JsonHelper.ParseArray(expectedJson);
+            Assert.IsTrue(JToken.DeepEquals(expected, clean));
 		}
 		#endregion
 
@@ -65,11 +68,13 @@ namespace ExactOnline.Client.Sdk.UnitTests
 			var cleanedJson = ApiResponseCleaner.GetJsonObject(sampleJsonResponse);
 
 			const string expectedCleanedJson = @"{""Remarks"":""\\escape test""}";
-			Assert.AreEqual(expectedCleanedJson, cleanedJson);
+            var expected = JsonHelper.ParseObject(expectedCleanedJson);
+
+            Assert.IsTrue(JToken.DeepEquals(cleanedJson, expected));
 		}
 
 		[TestCategory("Unit Test")]
-		[TestMethod, ExpectedException(typeof(ArgumentException))]
+		[TestMethod, ExpectedException(typeof(IncorrectJsonException))]
 		public void ApiResponseCleaner_FetchJsonObject_WithoutDKeyValuePair_Fails()
 		{
 			ApiResponseCleaner.GetJsonObject(JsonFileReader.GetJsonFromFile("ApiResponse_Json_Object_WithoutD.txt"));

@@ -74,10 +74,10 @@ namespace ExactOnline.Client.Sdk.Controllers
 		{
 			// Get the response and convert it to a list of entities of the specific type
 			var response = _conn.Get(query);
-			response = ApiResponseCleaner.GetJsonArray(response);
+			var jsonArray = ApiResponseCleaner.GetJsonArray(response);
 
 			var rc = new EntityConverter();
-			var entities = rc.ConvertJsonArrayToObjectList<T>(response);
+			var entities = rc.ConvertJsonArrayToObjectList<T>(jsonArray);
 
 			// If the entity isn't managed already, register to managed entity collection
 			foreach (var entity in entities)
@@ -104,9 +104,9 @@ namespace ExactOnline.Client.Sdk.Controllers
 
 			// Convert the resonse to an object of the specific type
 			var response = _conn.GetEntity(_keyname, guid, parameters);
-			response = ApiResponseCleaner.GetJsonObject(response);
+			var jsonObject = ApiResponseCleaner.GetJsonObject(response);
 			var ec = new EntityConverter();
-			var entity = ec.ConvertJsonToObject<T>(response);
+			var entity = ec.ConvertJsonToObject<T>(jsonObject);
 
 			// If entity isn't managed already, add entity to EntityController
 			AddEntityToManagedEntitiesCollection(entity);
@@ -145,9 +145,9 @@ namespace ExactOnline.Client.Sdk.Controllers
 				created = true;
 
 				// Set values of API in account entity (to ensure GUID is set)
-				response = ApiResponseCleaner.GetJsonObject(response);
+				var jsonObject = ApiResponseCleaner.GetJsonObject(response);
 				var ec = new EntityConverter();
-				entity = ec.ConvertJsonToObject<T>(response);
+				entity = ec.ConvertJsonToObject<T>(jsonObject);
 
 				// Try to add the entity to the managed entities collections
 				if (!AddEntityToManagedEntitiesCollection(entity))
@@ -186,8 +186,11 @@ namespace ExactOnline.Client.Sdk.Controllers
 			// Check if entity can be updated
 			if (!IsUpdateable(entity)) throw new Exception("Cannot update entity. Entity is not updateable. Please see the Reference Documentation.");
 
-			var associatedController = (EntityController)_entityControllers[GetIdentifierValue(entity)];
-			if (associatedController == null) throw new Exception("Entity identifier value not found");
+            var entityIdentifier = GetIdentifierValue(entity);
+            if (!_entityControllers.ContainsKey(entityIdentifier))
+                throw new Exception("Entity identifier value not found");
+
+            var associatedController = (EntityController)_entityControllers[entityIdentifier];
 			
 			return associatedController.Update(entity);
 		}
@@ -219,7 +222,10 @@ namespace ExactOnline.Client.Sdk.Controllers
 
 			// Delete entity
 			var entityIdentifier = GetIdentifierValue(entity);
-			var associatedController = (EntityController)_entityControllers[entityIdentifier];
+            if (!_entityControllers.ContainsKey(entityIdentifier))
+                throw new Exception("Entity identifier value not found");
+
+            var associatedController = (EntityController)_entityControllers[entityIdentifier];
 
 			var returnValue = false;
 			if (associatedController.Delete())
@@ -286,6 +292,9 @@ namespace ExactOnline.Client.Sdk.Controllers
 
 		public EntityController GetEntityController(string guid)
 		{
+            if (!_entityControllers.ContainsKey(guid))
+                return null;
+
 			return (EntityController)_entityControllers[guid];
 		}
 

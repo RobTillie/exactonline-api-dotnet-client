@@ -13,37 +13,40 @@ namespace ExactOnline.Client.Sdk.Helpers
 	/// </summary>
 	public class EntityConverter
 	{
-		/// <summary>
-		/// Convert single object to Dynamic object
-		/// </summary>
-		public dynamic ConvertJsonToDynamicObject(string json)
+        public static readonly JsonSerializerSettings GlobalJsonSerializerSettings = new JsonSerializerSettings
+        {
+            DateFormatHandling = DateFormatHandling.MicrosoftDateFormat
+        };
+
+        /// <summary>
+        /// Convert single object to Dynamic object
+        /// </summary>
+        public dynamic ConvertJsonToDynamicObject(JObject json)
 		{
 			try
 			{
-				var dynamicObject = JsonConvert.DeserializeObject<dynamic>(json);
-				return dynamicObject;
+				return json.ToObject<dynamic>();
 			}
-			catch
+			catch(Exception ex)
 			{
-				throw new IncorrectJsonException();
+				throw new IncorrectJsonException(ex.Message);
 			}
 		}
 
 		/// <summary>
 		/// Convert multiple objects to List of Dynamic objects
 		/// </summary>
-		public List<dynamic> ConvertJsonToDynamicObjectList(string json)
+		public List<dynamic> ConvertJsonToDynamicObjectList(JArray json)
 		{
             try
             {
-                JArray x = JsonConvert.DeserializeObject<dynamic>(json);
-                return x.ToObject<List<dynamic>>();
+                return json.ToObject<List<dynamic>>();
             }
-            catch
+            catch (Exception ex)
             {
-                throw new IncorrectJsonException();
+                throw new IncorrectJsonException(ex.Message);
             }
-		}
+        }
 
 		/// <summary>
 		/// Converts Dynamic Object to Json String
@@ -65,11 +68,7 @@ namespace ExactOnline.Client.Sdk.Helpers
 		/// <returns>Json String</returns>
 		public string ConvertObjectToJson<T>(T entity, GetEntityController entityControllerDelegate)
 		{
-			var converter = new ExactOnlineJsonConverter();
-			var converters = new JsonConverter[1];
-			converters[0] = converter;
-
-			return JsonConvert.SerializeObject(entity, converters);
+			return JsonConvert.SerializeObject(entity, new ExactOnlineJsonConverter());
 		}
 
 		/// <summary>
@@ -84,11 +83,7 @@ namespace ExactOnline.Client.Sdk.Helpers
 		/// <returns>Json String</returns>
 		public string ConvertObjectToJson<T>(T originalEntity, T entity, GetEntityController entityControllerDelegate)
 		{
-			var converter = new ExactOnlineJsonConverter(originalEntity, entityControllerDelegate);
-			var converters = new JsonConverter[1];
-			converters[0] = converter;
-
-			return JsonConvert.SerializeObject(entity, converters);
+			return JsonConvert.SerializeObject(entity, new ExactOnlineJsonConverter(originalEntity, entityControllerDelegate));
 		}
 
 		/// <summary>
@@ -97,37 +92,37 @@ namespace ExactOnline.Client.Sdk.Helpers
 		/// <typeparam name="T">Type of Exact.Web.Api.Models</typeparam>
 		/// <param name="json">Json String</param>
 		/// <returns>Exact Online Object</returns>
-		public T ConvertJsonToObject<T>(string json)
+		public T ConvertJsonToObject<T>(JObject json)
 		{
 			try
 			{
-				return JsonConvert.DeserializeObject<T>(json);
+                return json.ToObject<T>();
 			}
-			catch (Exception)
-			{
-				throw new IncorrectJsonException();
-			}
-		}
+            catch (Exception ex)
+            {
+                throw new IncorrectJsonException(ex.Message);
+            }
+        }
 
-		/// <summary>
-		/// Convert Json Array To Object List
-		/// </summary>
-		/// <typeparam name="T">Specifies the type</typeparam>
-		/// <param name="json">Json Array</param>
-		/// <returns>List of specified type</returns>
-		public List<T> ConvertJsonArrayToObjectList<T>(string json)
+        /// <summary>
+        /// Convert Json Array To Object List
+        /// </summary>
+        /// <typeparam name="T">Specifies the type</typeparam>
+        /// <param name="json">Json Array</param>
+        /// <returns>List of specified type</returns>
+        public List<T> ConvertJsonArrayToObjectList<T>(JArray json)
 		{
+            if (json == null)
+                return null;
+
 			try
 			{
-				var returnList = JsonConvert.DeserializeObject<List<T>>(json);
-				return returnList;
+				return json.ToObject<List<T>>();
 			}
-			catch (Exception)
-			{
-				throw new IncorrectJsonException("An error occurred while processing the json string. Possibly the result is too big. Please make a more specific query.");
-			}
-		}
-
-	}
-
+            catch (Exception ex)
+            {
+                throw new IncorrectJsonException(ex.Message);
+            }
+        }
+    }
 }

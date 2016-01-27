@@ -57,10 +57,9 @@ namespace ExactOnline.Client.Sdk.Helpers
 		public IController<T> GetController<T>() where T : class
 		{
 			var typename = GetTypename<T>();
-			var returncontroller = (Controller<T>)_controllers[typename];
 
 			// If not exists: create
-			if (returncontroller == null)
+			if (!_controllers.ContainsKey(typename))
 			{
 				ApiConnection conn;
 
@@ -77,14 +76,14 @@ namespace ExactOnline.Client.Sdk.Helpers
 					throw new Exception("Specified entity is not known in Exact Online. Please check the reference documentation");
 				}
 
-				returncontroller = new Controller<T>(conn)
+				var returncontroller = new Controller<T>(conn)
 				{
 					GetManagerForEntity = GetEntityManager
 				};
 				_controllers.Add(typename, returncontroller);
 			}
 
-			return returncontroller;
+			return (Controller<T>)_controllers[typename];
 		}
 
 	}

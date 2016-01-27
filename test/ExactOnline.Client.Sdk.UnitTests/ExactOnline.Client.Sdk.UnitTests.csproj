@@ -36,6 +36,10 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Newtonsoft.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Newtonsoft.Json.8.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
   </ItemGroup>
   <Choose>
@@ -65,6 +69,7 @@
     <Compile Include="MockObjects\ControllerMock.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Tools\JsonFileReader.cs" />
+    <Compile Include="Tools\JsonHelper.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Json\APIResponse_Json_Array.txt" />
@@ -94,6 +99,9 @@
       <Project>{ee442aa1-c51a-4531-92da-a7d9c7b73973}</Project>
       <Name>ExactOnline.Client.Sdk</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">

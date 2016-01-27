@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using ExactOnline.Client.Sdk.Exceptions;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace ExactOnline.Client.Sdk.Helpers
 {
@@ -19,109 +20,83 @@ namespace ExactOnline.Client.Sdk.Helpers
 		/// </summary>
 		/// <param name="response"></param>
 		/// <returns></returns>
-		public static string GetJsonObject(string response)
+		public static JObject GetJsonObject(string response)
 		{
-            var dict = JsonConvert.DeserializeObject<Dictionary<string,object>>(response);
-            var d = (Dictionary<string, object>)dict["d"];
-            return GetJsonFromDictionary(d);
+            try
+            {
+                var dict = JsonConvert.DeserializeObject<JObject>(response, EntityConverter.GlobalJsonSerializerSettings);
+                var d = dict["d"] as JObject;
+                CleanObject(d);
+
+                return d ?? dict;
+            }
+            catch (Exception ex)
+            {
+                throw new IncorrectJsonException(ex.Message);
+            }
 		}
 
 		/// <summary>
 		/// Fetch Json Array (Json within ['d']['results']) from response
 		/// </summary>
-		public static string GetJsonArray(string response)
-		{
-			try
-			{
-				IList results;
-				var dict = JsonConvert.DeserializeObject<Dictionary<string, object>>(response);
-                var innerPart = dict["d"];
-				if (innerPart.GetType() == typeof(Dictionary<string, object>))
-				{
-					var d = (Dictionary<string, object>)dict["d"];
-					results = (IList)d["results"];
-				}
-				else
-				{
-					results = (IList)innerPart;
-				}
-				return GetJsonFromResultDictionary(results);
-			}
-			catch (Exception e)
-			{
-				throw new IncorrectJsonException(e.Message);
-			}
+        public static JArray GetJsonArray(string response)
+        {
+            try
+            {
+                var obj = JsonConvert.DeserializeObject(response);
 
-		}
+                if (obj is JArray) return (JArray)obj;
 
-		#endregion
+                var dict = obj as JObject;
+                var innerPart = dict["d"] as JObject;
+                if (innerPart != null && innerPart["results"] != null)
+                {
+                    var jsonArray = (JArray)innerPart["results"];
 
-		#region Private methods
+                    foreach(var ent in jsonArray)
+                    {
+                        CleanObject(ent);
+                    }
 
-		/// <summary>
-		/// Converts key/value pairs to json
-		/// </summary>
-		private static string GetJsonFromDictionary(Dictionary<string, object> dictionary)
-		{
-			string json = "{";
+                    return jsonArray;
+                }
 
-			foreach (var entry in dictionary)
-			{
-				if (entry.Value == null || entry.Value.GetType() != typeof(Dictionary<string, object>))
-				{
-					// Entry is of type keyvaluepair
-					json += "\"" + entry.Key + "\":";
-					if (entry.Value == null)
-					{
-						json += "null";
-					}
-					else
-					{
-						json += JsonConvert.ToString(entry.Value.ToString());
-					}
-					json += ",";
-				}
-				else
-				{
-					// Create linked entities json
-					var subcollection = (Dictionary<string, object>)entry.Value;
-					if (subcollection.Keys.Contains("results"))
-					{
-						var results = (IList)subcollection["results"];
-						string subjson = GetJsonFromResultDictionary(results);
-						if (subjson.Length > 0)
-						{
-							json += "\"" + entry.Key + "\":";
-							json += subjson;
-							json += ",";
-						}
-					}
-				}
-			}
+                throw new IncorrectJsonException("Missing d or results tags");
+            }
+            catch (Exception e)
+            {
+                throw new IncorrectJsonException(e.Message);
+            }
+        }
 
-			json = json.Remove(json.Length - 1, 1); // Remove last comma
-			json += "}";
+        private static void CleanObject(JToken token)
+        {
+            var list = new Dictionary<JToken, JProperty>();
 
-			return json;
-		}
+            if (token.GetType() != typeof(JObject))
+                return;
 
-		private static string GetJsonFromResultDictionary(IList results)
-		{
-			string json = "[";
-			if (results != null && results.Count > 0)
-			{
-				foreach (Dictionary<string, object> entity in results)
-				{
-					json += GetJsonFromDictionary(entity) + ",";
-				}
+            // remove the results nodes
+            var childrenWithResults = token.Children<JProperty>()
+                .Where(c => c.Children<JObject>()["results"].Count() > 0).ToList();
 
-				json = json.Remove(json.Length - 1, 1); // Remove last comma
-			}
-			json += "]";
-			return json;
-		}
+            foreach(var child in childrenWithResults)
+            {
+                var resultsProperty = child.Children()["results"];
+                var newProperty = new JProperty(child.Name, resultsProperty.Children());
+                child.Replace(newProperty);
+            }
 
-		#endregion
+            // remove __deferred properties
+            var deferredChildren = token.Children<JProperty>()
+                .Where(c => c.Children<JObject>()["__deferred"].Count() > 0).ToList();
 
-	}
+            foreach(var deferred in deferredChildren)
+            {
+                deferred.Remove();
+            }
+        }
+
+        #endregion
+    }
 }

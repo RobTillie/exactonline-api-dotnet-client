@@ -4,6 +4,7 @@ using ExactOnline.Client.Sdk.Helpers;
 using ExactOnline.Client.Sdk.Interfaces;
 using ExactOnline.Client.Sdk.UnitTests.MockObjects;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 
@@ -19,7 +20,7 @@ namespace ExactOnline.Client.Sdk.UnitTests
 		public void Setup()
 		{
 			_mockConnection = new ApiConnectionMock();
-		}
+        }
 
 		[TestMethod]
 		[TestCategory("Unit Test")]

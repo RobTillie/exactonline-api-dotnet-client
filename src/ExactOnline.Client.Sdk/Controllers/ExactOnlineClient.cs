@@ -60,9 +60,9 @@ namespace ExactOnline.Client.Sdk.Controllers
 		{
 			var conn = new ApiConnection(_apiConnector, _exactOnlineApiUrl + "current/Me");
 			string response = conn.Get("$select=*");
-			response = ApiResponseCleaner.GetJsonArray(response);
+			var jsonObject = ApiResponseCleaner.GetJsonArray(response);
 			var converter = new EntityConverter();
-			var currentMe = converter.ConvertJsonArrayToObjectList<Me>(response);
+			var currentMe = converter.ConvertJsonArrayToObjectList<Me>(jsonObject);
 			return currentMe.FirstOrDefault();
 		}
 
