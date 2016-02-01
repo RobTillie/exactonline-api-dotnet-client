@@ -26,7 +26,15 @@ namespace ExactOnline.Client.Sdk.UnitTests
 			var jsonarray = ApiResponseCleaner.GetJsonArray(JsonFileReader.GetJsonFromFile("ApiResponse_Json_Array.txt"));
 		}
 
-		[TestCategory("Unit Test")]
+        [TestCategory("Unit Test")]
+        [TestMethod]
+        public void ApiResponseCleaner_FetchJsonArray_WithoutResults_Succeeds()
+        {
+            var jsonarray = ApiResponseCleaner.GetJsonArray(JsonFileReader.GetJsonFromFile("APIResponse_Json_Array_D_NoResults.txt"));
+            Assert.AreEqual(1, jsonarray.Count);
+        }
+
+        [TestCategory("Unit Test")]
 		[TestMethod, ExpectedException(typeof(IncorrectJsonException))]
 		public void ApiResponseCleaner_FetchJsonArray_WithOutDKeyValuePair_Fails()
 		{

@@ -143,7 +143,9 @@ namespace ExactOnline.Client.Sdk.Helpers
 
             var request = new HttpRequestMessage(method, url);
 			request.Headers.Add("Authorization", "Bearer " + _accessTokenDelegate());
-            request.Content = new StringContent(contentData, Encoding.UTF8, "application/json");
+
+            if(!string.IsNullOrEmpty(contentData))
+                request.Content = new StringContent(contentData, Encoding.UTF8, "application/json");
 
 			Debug.WriteLine(request.Method);
 			Debug.WriteLine(url);
@@ -161,8 +163,8 @@ namespace ExactOnline.Client.Sdk.Helpers
 			try
 			{
                 var client = new HttpClient();
-
-                if(addAcceptHeader)
+                
+                if (addAcceptHeader)
                     client.DefaultRequestHeaders.Add("Accept", "application/json");
 
                 // TODO: we could make this async

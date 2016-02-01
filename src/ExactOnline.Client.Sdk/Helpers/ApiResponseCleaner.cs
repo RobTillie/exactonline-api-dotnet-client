@@ -60,6 +60,10 @@ namespace ExactOnline.Client.Sdk.Helpers
 
                     return jsonArray;
                 }
+                else if(dict["d"] is JArray)
+                {
+                    return (JArray)dict["d"];
+                }
 
                 throw new IncorrectJsonException("Missing d or results tags");
             }

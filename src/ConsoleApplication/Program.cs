@@ -11,15 +11,15 @@ namespace ConsoleApplication
 		[STAThread]
 		static void Main(string[] args)
 		{
-			// These are the authorisation properties of your app.
-			// You can find the values in the App Center when you are maintaining the app.
-			const string clientId = "00000000-0000-0000-0000-000000000000";
-			const string clientSecret = "...";
+            // These are the authorisation properties of your app.
+            // You can find the values in the App Center when you are maintaining the app.
+            const string clientId = "b4e43a22-ab19-4531-9d5a-e08702dad431";
+            const string clientSecret = "rur2OsABYUgG";
 
-			// This can be any url as long as it is identical to the callback url you specified for your app in the App Center.
-			var callbackUrl = new Uri("http://www.exact.com"); 
+            // This can be any url as long as it is identical to the callback url you specified for your app in the App Center.
+            var callbackUrl = new Uri("http://cup-it.net");
 
-			var connector = new Connector(clientId, clientSecret, callbackUrl);
+            var connector = new Connector(clientId, clientSecret, callbackUrl);
 			var client = new ExactOnlineClient(connector.EndPoint, connector.GetAccessToken);
 
 			// Get the Code and Name of a random account in the administration

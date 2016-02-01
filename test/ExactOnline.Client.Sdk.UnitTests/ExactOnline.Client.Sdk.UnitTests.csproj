@@ -73,6 +73,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Json\APIResponse_Json_Array.txt" />
+    <Content Include="Json\APIResponse_Json_Array_D_NoResults.txt" />
     <Content Include="Json\APIResponse_Json_Array_WithEmptyLinkedEntities.txt" />
     <Content Include="Json\APIResponse_Json_Array_WithoutDTag.txt" />
     <Content Include="Json\APIResponse_Json_Array_WithoutResultsTag.txt" />
