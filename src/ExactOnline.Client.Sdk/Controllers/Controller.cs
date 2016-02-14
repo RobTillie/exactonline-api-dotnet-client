@@ -36,7 +36,7 @@ namespace ExactOnline.Client.Sdk.Controllers
 			_conn = conn;
 
             // Set keyname of the entity (name of the field that is used to identify)
-            var attributes = typeof(T).GetTypeInfo().GetCustomAttributes().Where(x => x.GetType() == typeof(DataServiceKey)).Select(a => a); //DataServiceKey
+            var attributes = typeof(T).GetTypeInfo().GetCustomAttributes().Where(x => x.GetType() == typeof(DataServiceKeyAttribute)).Select(a => a); //DataServiceKey
             
 			// Find unique value of entity
 			var enumerable = attributes as IList<Attribute> ?? attributes.ToList();
@@ -44,7 +44,7 @@ namespace ExactOnline.Client.Sdk.Controllers
 			{
 				throw new Exception("Cannot find 'DataServiceKey' field. This entity cannot be managed by the Controller");
 			}
-			var key = (DataServiceKey)enumerable.First();
+			var key = (DataServiceKeyAttribute)enumerable.First();
 			_keyname = key.DataServiceKey;
 			_entityControllerDelegate = GetEntityController;
 		}

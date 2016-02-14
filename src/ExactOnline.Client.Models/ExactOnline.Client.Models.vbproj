@@ -2,6 +2,8 @@
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
+    <VBRuntime>None</VBRuntime>
+    <MyType>Empty</MyType>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{BD9A83F1-1106-45BB-BCBA-A54D6C213FDC}</ProjectGuid>
@@ -12,7 +14,7 @@
     <MyType>Windows</MyType>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <ProjectTypeGuids>{14182A97-F7F0-4C62-8B27-98AA8AE2109A};{F184B08F-C81C-45F6-A57F-5ABD9991F28F}</ProjectTypeGuids>
-    <TargetFrameworkProfile>Profile259</TargetFrameworkProfile>
+    <TargetFrameworkProfile>Profile111</TargetFrameworkProfile>
     <SccProjectName>SAK</SccProjectName>
     <SccLocalPath>SAK</SccLocalPath>
     <SccAuxPath>SAK</SccAuxPath>
@@ -51,34 +53,16 @@
     <OptionStrict>On</OptionStrict>
   </PropertyGroup>
   <PropertyGroup>
+    <NoVBRuntimeReference>true</NoVBRuntimeReference>
+    <VBRuntime>None</VBRuntime>
+  </PropertyGroup>
+  <PropertyGroup>
     <OptionInfer>Off</OptionInfer>
   </PropertyGroup>
   <ItemGroup>
-    <Import Include="Microsoft.VisualBasic" />
     <Import Include="System" />
     <Import Include="System.Collections" />
     <Import Include="System.Collections.Generic" />
-    <Import Include="System.Collections.ObjectModel" />
-    <Import Include="System.ComponentModel" />
-    <Import Include="System.Diagnostics" />
-    <Import Include="System.IO" />
-    <Import Include="System.Linq" />
-    <Import Include="System.Runtime.CompilerServices" />
-    <Import Include="System.Threading.Tasks" />
-    <Import Include="System.Xml.Linq" />
-    <Import Include="Windows.ApplicationModel" />
-    <Import Include="Windows.ApplicationModel.Activation" />
-    <Import Include="Windows.Foundation" />
-    <Import Include="Windows.Foundation.Collections" />
-    <Import Include="Windows.Graphics.Display" />
-    <Import Include="Windows.UI.ViewManagement" />
-    <Import Include="Windows.UI.Xaml" />
-    <Import Include="Windows.UI.Xaml.Controls" />
-    <Import Include="Windows.UI.Xaml.Controls.Primitives" />
-    <Import Include="Windows.UI.Xaml.Data" />
-    <Import Include="Windows.UI.Xaml.Input" />
-    <Import Include="Windows.UI.Xaml.Media" />
-    <Import Include="Windows.UI.Xaml.Media.Imaging" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Attributes\DataServiceKey.vb" />
@@ -112,13 +96,6 @@
       <Generator>MyApplicationCodeGenerator</Generator>
       <LastGenOutput>Application.Designer.vb</LastGenOutput>
     </None>
-    <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <Reference Include="Newtonsoft.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Newtonsoft.Json.8.0.2\lib\portable-net40+sl5+wp80+win8+wpa81\Newtonsoft.Json.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.VisualBasic.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
