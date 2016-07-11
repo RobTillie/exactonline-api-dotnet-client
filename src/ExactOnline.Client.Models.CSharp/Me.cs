@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ExactOnline.Client.Models
 {
@@ -10,6 +6,9 @@ namespace ExactOnline.Client.Models
     public class Me
     {
         public int CurrentDivision { get; set; }
+        public Guid DivisionCustomer { get; set; }
+        public string DivisionCustomerCode { get; set; }
+        public string DivisionCustomerName { get; set; }
         public string FullName { get; set; }
         public string PictureUrl { get; set; }
         public byte[] ThumbnailPicture { get; set; }
