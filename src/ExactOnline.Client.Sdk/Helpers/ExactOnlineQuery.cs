@@ -209,10 +209,32 @@ namespace ExactOnline.Client.Sdk.Helpers
 			return _controller.Get(CreateODataQuery(true));
 		}
 
-		/// <summary>
-		/// Returns one instance of an entity using the specified identifier
-		/// </summary>
-		public T GetEntity(string identifier)
+        /// <summary>
+        /// Returns a list of all the entities using the specified query
+        /// </summary>
+        public List<T> GetAll()
+        {
+            const int toTake = 50;
+            var round = 0;
+            var hasNew = true;
+            var received = new List<T>();
+            while (hasNew)
+            {
+                var request = this
+                .Skip(round * toTake)
+                .Top(toTake)
+                .Get();
+                received.AddRange(request);
+                round++;
+                hasNew = request.Any();
+            }
+            return received;
+        }
+
+        /// <summary>
+        /// Returns one instance of an entity using the specified identifier
+        /// </summary>
+        public T GetEntity(string identifier)
 		{
 			if (string.IsNullOrEmpty(identifier)) throw new ArgumentException("Get entity: Identifier cannot be empty");
 			string query = CreateODataQuery(false);
