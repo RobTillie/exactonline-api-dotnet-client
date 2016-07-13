@@ -3,6 +3,7 @@ using System.Linq;
 using ExactOnline.Client.Models;
 using ExactOnline.Client.Sdk.Delegates;
 using ExactOnline.Client.Sdk.Helpers;
+using System.Threading.Tasks;
 
 namespace ExactOnline.Client.Sdk.Controllers
 {
@@ -33,7 +34,7 @@ namespace ExactOnline.Client.Sdk.Controllers
             if (!exactOnlineUrl.EndsWith("/")) exactOnlineUrl += "/";
             _exactOnlineApiUrl = exactOnlineUrl + "api/v1/";
 
-            _division = (division > 0) ? division : GetDivision();
+            _division = (division > 0) ? division : GetDivision().Result;
             string serviceRoot = _exactOnlineApiUrl + _division + "/";
 
             _controllers = new ControllerList(_apiConnector, serviceRoot);
@@ -57,11 +58,11 @@ namespace ExactOnline.Client.Sdk.Controllers
         /// Returns the current user data
         /// </summary>
         /// <returns>Me entity</returns>
-        public Me CurrentMe()
+        public async Task<Me> CurrentMe()
         {
             var conn = new ApiConnection(_apiConnector, _exactOnlineApiUrl + "current/Me");
-            string response = conn.Get("$select=*");
-            var jsonObject = ApiResponseCleaner.GetJsonArray(response);
+            string response = await conn.GetAsync("$select=*");
+            var jsonObject = await ApiResponseCleaner.GetJsonArrayAsync(response);
             var converter = new EntityConverter();
             var currentMe = converter.ConvertJsonArrayToObjectList<Me>(jsonObject);
             return currentMe.FirstOrDefault();
@@ -71,14 +72,14 @@ namespace ExactOnline.Client.Sdk.Controllers
         /// return the division number of the current user
         /// </summary>
         /// <returns>Division number</returns>
-        public int GetDivision()
+        public async Task<int> GetDivision()
         {
             if (_division > 0)
             {
                 return _division;
             }
 
-            var currentMe = CurrentMe();
+            var currentMe = await CurrentMe();
             if (currentMe != null)
             {
                 _division = currentMe.CurrentDivision;

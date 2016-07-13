@@ -9,6 +9,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace ExactOnline.Client.Sdk.UnitTests
 {
@@ -31,10 +32,10 @@ namespace ExactOnline.Client.Sdk.UnitTests
 		#region Json To Object Test
 		[TestCategory("Unit Test")]
 		[TestMethod]
-		public void EntityConverter_ConvertJsonToObjectList_WithCorrectInput_Succeeds()
+		public async Task EntityConverter_ConvertJsonToObjectList_WithCorrectInput_Succeeds()
 		{
 			string json = JsonFileReader.GetJsonFromFile("Response_Json_Array_Account.txt");
-            var jsonArray = ApiResponseCleaner.GetJsonArray(json);
+            var jsonArray = await ApiResponseCleaner.GetJsonArrayAsync(json);
 			List<Account> accounts = _entityConverter.ConvertJsonArrayToObjectList<Account>(jsonArray);
 			if (accounts.Count != 2)
 			{
@@ -44,10 +45,10 @@ namespace ExactOnline.Client.Sdk.UnitTests
 
 		[TestCategory("Unit Test")]
 		[TestMethod]
-		public void EntityConverter_ConvertJsonToObjectList_WithParsedJson_Succeeds()
+		public async Task EntityConverter_ConvertJsonToObjectList_WithParsedJson_Succeeds()
 		{
 			string json = JsonFileReader.GetJsonFromFile("Response_Json_Array_Account.txt");
-            var jsonArray = ApiResponseCleaner.GetJsonArray(json);
+            var jsonArray = await ApiResponseCleaner.GetJsonArrayAsync(json);
             List<Account> accounts = _entityConverter.ConvertJsonArrayToObjectList<Account>(jsonArray);
 			if (accounts.Count != 2)
 			{
@@ -69,7 +70,7 @@ namespace ExactOnline.Client.Sdk.UnitTests
 		#region Object to Json Test
 		[TestCategory("Unit Test")]
 		[TestMethod]
-		public void EntityConverter_ConvertObjectToJson_ForCreating_Succeeds()
+		public async Task EntityConverter_ConvertObjectToJson_ForCreating_Succeeds()
 		{
 			// Test if objects is converted to json correctly
 			var dateTimeEpoc = new DateTime(1970, 1, 1, 0, 0, 0, 0);
@@ -93,73 +94,73 @@ namespace ExactOnline.Client.Sdk.UnitTests
 			#endregion
 
 			var converter = new EntityConverter();
-			string result = converter.ConvertObjectToJson(simpleEntity, null);
+			string result = await converter.ConvertObjectToJsonAsync(simpleEntity, null);
 			
 			Assert.AreEqual(expected, result);
 		}
 
 		[TestMethod]
 		[TestCategory("Unit Test")]
-		public void EntityConverter_ConvertObjectToJson_ForAlteredFields_Succeeds()
+		public async Task EntityConverter_ConvertObjectToJson_ForAlteredFields_Succeeds()
 		{
 			var account = new Account{ Name = "New Account"};
 			var entityConverter = new EntityConverter();
 			const string expected = "{\"Name\":\"New Account\"}";
 
-			var result = entityConverter.ConvertObjectToJson(new Account(), account, null);
+			var result = await entityConverter.ConvertObjectToJsonAsync(new Account(), account, null);
 
 			Assert.AreEqual(expected, result);
 		}
 
 		[TestMethod]
 		[TestCategory("Unit Test")]
-		public void EntityConverter_ConvertObjectToJson_ForNoAlteredFields_Succeeds()
+		public async Task EntityConverter_ConvertObjectToJson_ForNoAlteredFields_Succeeds()
 		{
 			var oldAccount = new Account { Name = "New Account" };
 			var newAccount = new Account { Name = "New Account" };
 			var entityConverter = new EntityConverter();
 			const string expected = "";
 
-			var result = entityConverter.ConvertObjectToJson(oldAccount, newAccount, null);
+			var result = await entityConverter.ConvertObjectToJsonAsync(oldAccount, newAccount, null);
 
 			Assert.AreEqual(expected, result);
 		}
 
 		[TestMethod]
 		[TestCategory("Unit Test")]
-		public void EntityConverter_ConvertObjectToJson_WithReadonlyFields_Succeeds()
+		public async Task EntityConverter_ConvertObjectToJson_WithReadonlyFields_Succeeds()
 		{
 			var newAccount = new Account { AccountManagerHID = 10 };
 			var entityConverter = new EntityConverter();
 			const string expected = "";
 
-			var result = entityConverter.ConvertObjectToJson(new Account(), newAccount, null);
+			var result = await entityConverter.ConvertObjectToJsonAsync(new Account(), newAccount, null);
 
 			Assert.AreEqual(expected, result);
 		}
 
 		[TestMethod]
 		[TestCategory("Unit Test")]
-		public void EntityConverter_CreateWithGuid_Succeeds()
+		public async Task EntityConverter_CreateWithGuid_Succeeds()
 		{
 			var newAccount = new Account { ID = new Guid("8f8b8025-90b3-4307-a8a3-a5111d048fb5") };
 			var entityConverter = new EntityConverter();
 			const string expected = "{\"ID\":\"8f8b8025-90b3-4307-a8a3-a5111d048fb5\"}";
 
-			var result = entityConverter.ConvertObjectToJson(new Account(), newAccount, null);
+			var result = await entityConverter.ConvertObjectToJsonAsync(new Account(), newAccount, null);
 
 			Assert.AreEqual(expected, result);
 		}
 
 		[TestMethod]
 		[TestCategory("Unit Test")]
-		public void EntityConverter_CreateWithoutGuid_Succeeds()
+		public async Task EntityConverter_CreateWithoutGuid_Succeeds()
 		{
 			var newAccount = new Account { ID = new Guid() };
 			var entityConverter = new EntityConverter();
 			const string expected = "";
 
-			var result = entityConverter.ConvertObjectToJson(new Account(), newAccount, null);
+			var result = await entityConverter.ConvertObjectToJsonAsync(new Account(), newAccount, null);
 
 			Assert.AreEqual(expected, result);
 		}
@@ -169,23 +170,23 @@ namespace ExactOnline.Client.Sdk.UnitTests
 		#region Dynamic to Json Tests
 		[TestCategory("Unit Test")]
 		[TestMethod]
-		public void EntityConverter_ConvertDynamicObjectToJson_WithCorrectDynamicObject_Succeeds()
+		public async Task EntityConverter_ConvertDynamicObjectToJson_WithCorrectDynamicObject_Succeeds()
 		{
 			dynamic account = new {code = "123", description = "Test"};
 			const string jsonValue = @"{""code"":""123"",""description"":""Test""}";
 
-			string json = _entityConverter.ConvertDynamicObjectToJson(account);
+			string json = await _entityConverter.ConvertDynamicObjectToJsonAsync(account);
 			Assert.AreEqual(jsonValue, json);
 		}
 
 		[TestCategory("Unit Test")]
 		[TestMethod]
-		public void EntityConverter_ConvertDynamicObjectToJson_WithEmptyDynamicObject_Succeeds()
+		public async Task EntityConverter_ConvertDynamicObjectToJson_WithEmptyDynamicObject_Succeeds()
 		{
 			dynamic account = new { };
 			const string jsonValue = @"{""code"":""123"",""description"":""Test""}";
 
-			string json = _entityConverter.ConvertDynamicObjectToJson(account);
+			string json = await _entityConverter.ConvertDynamicObjectToJsonAsync(account);
 			Assert.AreNotEqual(jsonValue, json);
 		}
 		#endregion
@@ -193,10 +194,10 @@ namespace ExactOnline.Client.Sdk.UnitTests
 		#region Json to Dynamic Tests
 		[TestCategory("Unit Test")]
 		[TestMethod]
-		public void EntityConverter_ConvertJsonToDynamicObject_WithCorrectJson_Succeeds()
+		public async Task EntityConverter_ConvertJsonToDynamicObject_WithCorrectJson_Succeeds()
 		{
 			string jsonsresponse = JsonFileReader.GetJsonFromFile("Response_Json_Object_GLAccount.txt");
-			var json = ApiResponseCleaner.GetJsonObject(jsonsresponse);
+			var json = await ApiResponseCleaner.GetJsonObjectAsync(jsonsresponse);
 
 			dynamic glaccountObject = _entityConverter.ConvertJsonToDynamicObject(json);
 			Assert.AreEqual("D", (string)glaccountObject.BalanceSide);
@@ -238,20 +239,20 @@ namespace ExactOnline.Client.Sdk.UnitTests
 
 		[TestCategory("Unit Test")]
 		[TestMethod, ExpectedException(typeof(IncorrectJsonException))]
-		public void EntityConverter_ConvertJsonToDynamicObject_WithIncorrectJson_Fails()
+		public async Task EntityConverter_ConvertJsonToDynamicObject_WithIncorrectJson_Fails()
 		{
 			var json = JsonFileReader.GetJsonFromFile("Response_Json_Object_GLAccount_WithCorruptJson.txt");
-			dynamic glaccountObject = _entityConverter.ConvertJsonToDynamicObject(ApiResponseCleaner.GetJsonObject(json));
+			dynamic glaccountObject = _entityConverter.ConvertJsonToDynamicObject(await ApiResponseCleaner.GetJsonObjectAsync(json));
 			Assert.AreEqual("D", (string)glaccountObject.BalanceSide);
 			Assert.AreEqual("W", (string)glaccountObject.BalanceType);
 		}
 
 		[TestCategory("Unit Test")]
 		[TestMethod]
-		public void EntityConverter_ConvertJsonToDynamicObjectCollection_Succeeds()
+		public async Task EntityConverter_ConvertJsonToDynamicObjectCollection_Succeeds()
 		{
 			var json = JsonFileReader.GetJsonFromFile("Response_Json_Array_GLAccount.txt");
-			var jsonArray = ApiResponseCleaner.GetJsonArray(json);
+			var jsonArray = await ApiResponseCleaner.GetJsonArrayAsync(json);
 
 			List<dynamic> list = _entityConverter.ConvertJsonToDynamicObjectList(jsonArray);
 			if (list.Count < 2)
@@ -263,18 +264,18 @@ namespace ExactOnline.Client.Sdk.UnitTests
 
 		[TestCategory("Unit Test")]
 		[TestMethod, ExpectedException(typeof(IncorrectJsonException))]
-		public void EntityConverter_ConvertJsonToDynamicObjectCollection_WithEmptyJson_Fails()
+		public async Task EntityConverter_ConvertJsonToDynamicObjectCollection_WithEmptyJson_Fails()
 		{
 			const string json = "";
-			List<dynamic> list = _entityConverter.ConvertJsonToDynamicObjectList(ApiResponseCleaner.GetJsonArray(json));
+			List<dynamic> list = _entityConverter.ConvertJsonToDynamicObjectList(await ApiResponseCleaner.GetJsonArrayAsync(json));
 		}
 
 		[TestCategory("Unit Test")]
 		[TestMethod, ExpectedException(typeof(IncorrectJsonException))]
-		public void EntityConverter_ConvertJsonToDynamicObjectCollection_WithEmptyJsonEntities_Fails()
+		public async Task EntityConverter_ConvertJsonToDynamicObjectCollection_WithEmptyJsonEntities_Fails()
 		{
 			const string json = "{[{},{}]}";
-			List<dynamic> list = _entityConverter.ConvertJsonToDynamicObjectList(ApiResponseCleaner.GetJsonArray(json));
+			List<dynamic> list = _entityConverter.ConvertJsonToDynamicObjectList(await ApiResponseCleaner.GetJsonArrayAsync(json));
 		}
 
 		#endregion
@@ -282,9 +283,9 @@ namespace ExactOnline.Client.Sdk.UnitTests
 		#region Linked Entity Json to Object
 		[TestCategory("Unit Test")]
 		[TestMethod]
-		public void EntityConverter_ConvertLinkedEntityJsonArrayToObjects_Succeeds()
+		public async Task EntityConverter_ConvertLinkedEntityJsonArrayToObjects_Succeeds()
 		{
-			var array = ApiResponseCleaner.GetJsonArray(JsonFileReader.GetJsonFromFile("Response_Json_Array_SalesInvoice_WithLinkedEntities.txt"));
+			var array = await ApiResponseCleaner.GetJsonArrayAsync(JsonFileReader.GetJsonFromFile("Response_Json_Array_SalesInvoice_WithLinkedEntities.txt"));
 			var converter = new EntityConverter();
 			List<SalesInvoice> invoices = converter.ConvertJsonArrayToObjectList<SalesInvoice>(array);
 
@@ -297,9 +298,9 @@ namespace ExactOnline.Client.Sdk.UnitTests
 
 		[TestCategory("Unit Test")]
 		[TestMethod]
-		public void EntityConverter_ConvertLinkedEntityJsonToObject_Succeeds()
+		public async Task EntityConverter_ConvertLinkedEntityJsonToObject_Succeeds()
 		{
-			var json = ApiResponseCleaner.GetJsonObject(JsonFileReader.GetJsonFromFile("Response_Json_Object_SalesInvoice.txt"));
+			var json = await ApiResponseCleaner.GetJsonObjectAsync(JsonFileReader.GetJsonFromFile("Response_Json_Object_SalesInvoice.txt"));
 			
 			var converter = new EntityConverter();
 			var invoice = converter.ConvertJsonToObject<SalesInvoice>(json);
@@ -313,7 +314,7 @@ namespace ExactOnline.Client.Sdk.UnitTests
 		#region Linked Entities To Json
 		[TestCategory("Unit Test")]
 		[TestMethod]
-		public void EntityConverter_ConvertLinkedObjectToJson_Succeeds()
+		public async Task EntityConverter_ConvertLinkedObjectToJson_Succeeds()
 		{
 			// Create Object
 			var newInvoice = new ComplexEntity
@@ -336,7 +337,7 @@ namespace ExactOnline.Client.Sdk.UnitTests
 			newInvoice.Lines = invoicelines;
 
 			var entityConverter = new EntityConverter();
-			string json = entityConverter.ConvertObjectToJson(newInvoice, null);
+			string json = await entityConverter.ConvertObjectToJsonAsync(newInvoice, null);
 			string expected = JsonFileReader.GetJsonFromFileWithoutWhiteSpace("Expected_Json_Object_ComplexEntity_WithLinkedEntity.txt");
 			Assert.AreEqual(expected, json);
 		}
@@ -354,7 +355,7 @@ namespace ExactOnline.Client.Sdk.UnitTests
 
 		[TestCategory("Unit Test")]
 		[TestMethod, Ignore]
-		public void EntityConverter_ConvertExistingLinkedObjectToJson_Succeeds()
+		public async Task EntityConverter_ConvertExistingLinkedObjectToJson_Succeeds()
 		{
 			// Create Object
 			var newInvoice = new SalesInvoice {InvoiceID = new Guid("4f68481a-7a2c-4fbc-a3a0-0c494df3fa0d")};
@@ -367,7 +368,7 @@ namespace ExactOnline.Client.Sdk.UnitTests
 
 			var entityConverter = new EntityConverter();
 			var controllerDelegate = new GetEntityController(GetEntityController);
-			string json = entityConverter.ConvertObjectToJson((SalesInvoice)entityController.OriginalEntity, newInvoice, controllerDelegate);
+			string json = await entityConverter.ConvertObjectToJsonAsync((SalesInvoice)entityController.OriginalEntity, newInvoice, controllerDelegate);
 
 			const string expected = "{\"SalesInvoiceLines\": [{\"Description\": \"ChangedNewInvoiceForEntityWithCollection\"}]}";
 			Assert.AreEqual(expected, json);
@@ -377,7 +378,7 @@ namespace ExactOnline.Client.Sdk.UnitTests
 
 		[TestCategory("Unit Test")]
 		[TestMethod]
-		public void EntityConverter_ConvertEmptyLinkedObjectToJson_Succeeds()
+		public async Task EntityConverter_ConvertEmptyLinkedObjectToJson_Succeeds()
 		{
 			// Create Object
 			var newInvoice = new ComplexEntity
@@ -391,7 +392,7 @@ namespace ExactOnline.Client.Sdk.UnitTests
 				};
 
 			var entityConverter = new EntityConverter();
-			string json = entityConverter.ConvertObjectToJson(newInvoice, null);
+			string json = await entityConverter.ConvertObjectToJsonAsync(newInvoice, null);
 			string expected = JsonFileReader.GetJsonFromFileWithoutWhiteSpace("Expected_Json_Object_ComplexEntity_WithEmptyLinkedEntities.txt");
 			Assert.AreEqual(expected, json);
 		}
@@ -401,12 +402,12 @@ namespace ExactOnline.Client.Sdk.UnitTests
 		[TestCategory("Unit Test")]
 		[TestMethod, ExpectedException(typeof(IncorrectJsonException))]
         [Ignore()]
-		public void EntityConverter_ConvertLongJson_Fails()
+		public async Task EntityConverter_ConvertLongJson_Fails()
 		{
             // This failed for another reason in the original code, not because it was to long. Not clear to me why this should fail.
             var entityConverter = new EntityConverter();
 			string json = JsonFileReader.GetJsonFromFile("Response_Json_Array_Account_Long.txt");
-			var accounts = entityConverter.ConvertJsonArrayToObjectList<Account>(ApiResponseCleaner.GetJsonArray(json));
+			var accounts = entityConverter.ConvertJsonArrayToObjectList<Account>(await ApiResponseCleaner.GetJsonArrayAsync(json));
 		}
 		#endregion 
 

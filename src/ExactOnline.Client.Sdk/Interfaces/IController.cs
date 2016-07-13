@@ -6,17 +6,17 @@ namespace ExactOnline.Client.Sdk.Interfaces
 {
 	public interface IController<T>
 	{
-		List<T> Get(string query);
+		Task<List<T>> GetAsync(string query);
 
-		T GetEntity(string guid, string parameters);
+        Task<T> GetEntityAsync(string guid, string parameters);
 
-		Boolean Create(ref T entity);
+        Task<T> CreateAsync(T entity);
 
-		Boolean Update(T entity);
+        Task<bool> UpdateAsync(T entity);
 
-		Boolean Delete(T entity);
+        Task<bool> DeleteAsync(T entity);
 
-		int Count(); // For $count function API
+        Task<int> CountAsync(); // For $count function API
 
 		void RegistrateLinkedEntityField(string fieldname);
 	}

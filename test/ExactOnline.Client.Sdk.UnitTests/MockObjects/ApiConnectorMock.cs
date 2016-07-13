@@ -1,5 +1,6 @@
 ﻿using System;
 using ExactOnline.Client.Sdk.Interfaces;
+using System.Threading.Tasks;
 
 namespace ExactOnline.Client.Sdk.UnitTests.MockObjects
 {
@@ -11,7 +12,7 @@ namespace ExactOnline.Client.Sdk.UnitTests.MockObjects
 	{
 		public String Data { get; set; }
 
-		public string DoCleanRequest(string uri)
+		public async Task<string> DoCleanRequestAsync(string uri)
 		{
 			return "";
 		}
@@ -24,28 +25,28 @@ namespace ExactOnline.Client.Sdk.UnitTests.MockObjects
 
 		#region IAPIConnector Members
 
-		public string DoGetRequest(string endpoint, string parameters)
+		public async Task<string> DoGetRequestAsync(string endpoint, string parameters)
 		{
 			return string.Empty;
 		}
 
-		public string DoPostRequest(string endpoint, string postdata)
+		public async Task<string> DoPostRequestAsync(string endpoint, string postdata)
 		{
 			Data = postdata;
 			return string.Empty;
 		}
 
-		public string DoPutRequest(string endpoint, string putData)
+		public async Task<string> DoPutRequestAsync(string endpoint, string putData)
 		{
 			return string.Empty;
 		}
 
-		public string DoDeleteRequest(string endpoint)
+		public async Task<string> DoDeleteRequestAsync(string endpoint)
 		{
 			return string.Empty;
 		}
 
-		public int GetCurrentDivision(string website)
+		public async Task<int> GetCurrentDivisionAsync(string website)
 		{
 			return -1;
 		}

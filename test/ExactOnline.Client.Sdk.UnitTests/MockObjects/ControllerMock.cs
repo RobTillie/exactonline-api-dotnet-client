@@ -8,36 +8,36 @@ namespace ExactOnline.Client.Sdk.UnitTests.MockObjects
 	public sealed class ControllerMock<T> : IController<T>
 	{
 
-		public int Count()
+		public async Task<int> CountAsync()
 		{
 			return 0;
 		}
 
 		public string ODataQuery { get; set; }
 
-		List<T> IController<T>.Get(string query)
+        async Task<List<T>> IController<T>.GetAsync(string query)
 		{
 			ODataQuery = query;
 			return null;
 		}
 
-		T IController<T>.GetEntity(string guid, string parameters)
+        async Task<T> IController<T>.GetEntityAsync(string guid, string parameters)
 		{
 
 			throw new NotImplementedException();
 		}
 
-		bool IController<T>.Create(ref T entity)
+        async Task<T> IController<T>.CreateAsync(T entity)
+		{
+			return entity;
+		}
+
+        async Task<bool> IController<T>.UpdateAsync(T entity)
 		{
 			return true;
 		}
 
-		bool IController<T>.Update(T entity)
-		{
-			return true;
-		}
-
-		bool IController<T>.Delete(T entity)
+        async Task<bool> IController<T>.DeleteAsync(T entity)
 		{
 			return true;
 		}

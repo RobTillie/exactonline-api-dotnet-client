@@ -5,6 +5,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
+using System.Threading.Tasks;
 
 namespace ExactOnline.Client.Sdk.UnitTests
 {
@@ -21,40 +22,40 @@ namespace ExactOnline.Client.Sdk.UnitTests
 		#region Test: Fetch Json Array
 		[TestCategory("Unit Test")]
 		[TestMethod]
-		public void ApiResponseCleaner_FetchJsonArray_WithCorrectValues_Succeeds()
+		public async Task ApiResponseCleaner_FetchJsonArray_WithCorrectValues_Succeeds()
 		{
-			var jsonarray = ApiResponseCleaner.GetJsonArray(JsonFileReader.GetJsonFromFile("ApiResponse_Json_Array.txt"));
+			var jsonarray = await ApiResponseCleaner.GetJsonArrayAsync(JsonFileReader.GetJsonFromFile("ApiResponse_Json_Array.txt"));
 		}
 
         [TestCategory("Unit Test")]
         [TestMethod]
-        public void ApiResponseCleaner_FetchJsonArray_WithoutResults_Succeeds()
+        public async Task ApiResponseCleaner_FetchJsonArray_WithoutResults_Succeeds()
         {
-            var jsonarray = ApiResponseCleaner.GetJsonArray(JsonFileReader.GetJsonFromFile("APIResponse_Json_Array_D_NoResults.txt"));
+            var jsonarray = await ApiResponseCleaner.GetJsonArrayAsync(JsonFileReader.GetJsonFromFile("APIResponse_Json_Array_D_NoResults.txt"));
             Assert.AreEqual(1, jsonarray.Count);
         }
 
         [TestCategory("Unit Test")]
 		[TestMethod, ExpectedException(typeof(IncorrectJsonException))]
-		public void ApiResponseCleaner_FetchJsonArray_WithOutDKeyValuePair_Fails()
+		public async Task ApiResponseCleaner_FetchJsonArray_WithOutDKeyValuePair_Fails()
 		{
-			ApiResponseCleaner.GetJsonArray(JsonFileReader.GetJsonFromFile("ApiResponse_Json_Array_WithoutDTag.txt"));
+            await ApiResponseCleaner.GetJsonArrayAsync(JsonFileReader.GetJsonFromFile("ApiResponse_Json_Array_WithoutDTag.txt"));
 		}
 
 		[TestCategory("Unit Test")]
 		[TestMethod, ExpectedException(typeof(IncorrectJsonException))]
-		public void ApiResponseCleaner_FetchJsonArray_WithOutResultsKeyValuePair_Fails()
+		public async Task ApiResponseCleaner_FetchJsonArray_WithOutResultsKeyValuePair_Fails()
 		{
-			ApiResponseCleaner.GetJsonArray(JsonFileReader.GetJsonFromFile("ApiResponse_Json_Array_WithoutResultsTag.txt"));
+            await ApiResponseCleaner.GetJsonArrayAsync(JsonFileReader.GetJsonFromFile("ApiResponse_Json_Array_WithoutResultsTag.txt"));
 		}
 
 		[TestCategory("Unit Test")]
 		[TestMethod]
-		public void ApiResponseCleanerFetchJsonArrayWithEmptyLinkedEntitiesSucceeds()
+		public async Task ApiResponseCleanerFetchJsonArrayWithEmptyLinkedEntitiesSucceeds()
 		{
 			const string expectedJson = @"[{""BankAccounts"":[]}]";
-            var clean = ApiResponseCleaner.GetJsonArray(JsonFileReader.GetJsonFromFile("ApiResponse_Json_Array_WithEmptyLinkedEntities.txt"));
-            var expected = JsonHelper.ParseArray(expectedJson);
+            var clean = await ApiResponseCleaner.GetJsonArrayAsync(JsonFileReader.GetJsonFromFile("ApiResponse_Json_Array_WithEmptyLinkedEntities.txt"));
+            var expected = Tools.JsonHelper.ParseArray(expectedJson);
             Assert.IsTrue(JToken.DeepEquals(expected, clean));
 		}
 		#endregion
@@ -62,30 +63,30 @@ namespace ExactOnline.Client.Sdk.UnitTests
 		#region Test: Fetch Json Object
 		[TestCategory("Unit Test")]
 		[TestMethod]
-		public void ApiResponseCleaner_FetchJsonObject_WithCorrectValues_Succeeds()
+		public async Task ApiResponseCleaner_FetchJsonObject_WithCorrectValues_Succeeds()
 		{
-			ApiResponseCleaner.GetJsonObject(JsonFileReader.GetJsonFromFile("ApiResponse_Json_Object.txt"));
+			await ApiResponseCleaner.GetJsonObjectAsync(JsonFileReader.GetJsonFromFile("ApiResponse_Json_Object.txt"));
 		}
 
 		[TestCategory("Unit Test")]
 		[TestMethod]
-		public void ApiResponseCleaner_FetchJsonObject_WithEscapeCharacter_Succeeds()
+		public async Task ApiResponseCleaner_FetchJsonObject_WithEscapeCharacter_Succeeds()
 		{
 			const string sampleJsonResponse = @"{ ""d"": { ""Remarks"": ""\\escape test"" }}";			
 
-			var cleanedJson = ApiResponseCleaner.GetJsonObject(sampleJsonResponse);
+			var cleanedJson = await ApiResponseCleaner.GetJsonObjectAsync(sampleJsonResponse);
 
 			const string expectedCleanedJson = @"{""Remarks"":""\\escape test""}";
-            var expected = JsonHelper.ParseObject(expectedCleanedJson);
+            var expected = Tools.JsonHelper.ParseObject(expectedCleanedJson);
 
             Assert.IsTrue(JToken.DeepEquals(cleanedJson, expected));
 		}
 
 		[TestCategory("Unit Test")]
 		[TestMethod, ExpectedException(typeof(IncorrectJsonException))]
-		public void ApiResponseCleaner_FetchJsonObject_WithoutDKeyValuePair_Fails()
+		public async Task ApiResponseCleaner_FetchJsonObject_WithoutDKeyValuePair_Fails()
 		{
-			ApiResponseCleaner.GetJsonObject(JsonFileReader.GetJsonFromFile("ApiResponse_Json_Object_WithoutD.txt"));
+            await ApiResponseCleaner.GetJsonObjectAsync(JsonFileReader.GetJsonFromFile("ApiResponse_Json_Object_WithoutD.txt"));
 		}
 		#endregion
 	}

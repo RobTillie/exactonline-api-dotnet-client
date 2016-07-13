@@ -194,9 +194,9 @@ namespace ExactOnline.Client.Sdk.Helpers
 		/// Count the amount of entities in the the entity
 		/// </summary>
 		/// <returns></returns>
-		public int Count()
+		public async Task<int> CountAsync()
 		{
-			return _controller.Count();
+			return await _controller.CountAsync();
 		}
 
 
@@ -204,15 +204,15 @@ namespace ExactOnline.Client.Sdk.Helpers
 		/// Returns a List of entities using the specified query
 		/// </summary>
 		/// <returns></returns>
-		public List<T> Get()
+		public async Task<List<T>> GetAsync()
 		{
-			return _controller.Get(CreateODataQuery(true));
+			return await _controller.GetAsync(CreateODataQuery(true));
 		}
 
         /// <summary>
         /// Returns a list of all the entities using the specified query
         /// </summary>
-        public List<T> GetAll()
+        public async Task<List<T>> GetAllAsync()
         {
             const int toTake = 50;
             var round = 0;
@@ -220,10 +220,7 @@ namespace ExactOnline.Client.Sdk.Helpers
             var received = new List<T>();
             while (hasNew)
             {
-                var request = this
-                .Skip(round * toTake)
-                .Top(toTake)
-                .Get();
+                var request = await this.Skip(round * toTake).Top(toTake).GetAsync();
                 received.AddRange(request);
                 round++;
                 hasNew = request.Any();
@@ -234,57 +231,63 @@ namespace ExactOnline.Client.Sdk.Helpers
         /// <summary>
         /// Returns one instance of an entity using the specified identifier
         /// </summary>
-        public T GetEntity(string identifier)
+        public async Task<T> GetEntityAsync(string identifier)
 		{
 			if (string.IsNullOrEmpty(identifier)) throw new ArgumentException("Get entity: Identifier cannot be empty");
 			string query = CreateODataQuery(false);
-			return _controller.GetEntity(identifier, query);
+			return await _controller.GetEntityAsync(identifier, query);
 		}
 
 		/// <summary>
 		/// Returns one instance of an entity using the specified identifier
 		/// </summary>
-		public T GetEntity(Guid identifier)
+		public async Task<T> GetEntityAsync(Guid identifier)
 		{
 			if (identifier == Guid.Empty) throw new ArgumentException("Get entity: Identifier cannot be empty");
 			string query = CreateODataQuery(false);
-			return _controller.GetEntity(identifier.ToString(), query);
+			return await _controller.GetEntityAsync(identifier.ToString(), query);
 		}
 
 		/// <summary>
 		/// Returns one instance of an entity using the specified identifier
 		/// </summary>
-		public T GetEntity(int identifier)
+		public async Task<T> GetEntityAsync(int identifier)
 		{
 			string query = CreateODataQuery(false);
-			return _controller.GetEntity(identifier.ToString(CultureInfo.InvariantCulture), query);
+			return await _controller.GetEntityAsync(identifier.ToString(CultureInfo.InvariantCulture), query);
 		}
 
 		/// <summary>
 		/// Updates the specified entity
 		/// </summary>
-		public Boolean Update(T entity)
+		public async Task<bool> UpdateAsync(T entity)
 		{
 			if (entity == null) throw new ArgumentException("Update entity: Entity cannot be null");
-			return _controller.Update(entity);
+			return await _controller.UpdateAsync(entity);
 		}
 
 		/// <summary>
 		/// Deletes the specified entity
 		/// </summary>
-		public Boolean Delete(T entity)
+		public async Task<bool> DeleteAsync(T entity)
 		{
 			if (entity == null) throw new ArgumentException("Delete entity: Entity cannot be null");
-			return _controller.Delete(entity);
+			return await _controller.DeleteAsync(entity);
 		}
 
 		/// <summary>
 		/// Inserts the specified entity into Exact Online
 		/// </summary>
-		public Boolean Insert(ref T entity)
+		public async Task<T> InsertAsync(T entity)
 		{
 			if (entity == null) throw new ArgumentException("Insert entity: Entity cannot be null");
-			return _controller.Create(ref entity);
+			return await _controller.CreateAsync(entity);
 		}
-	}
+
+        #region Async support
+
+
+
+        #endregion
+    }
 }

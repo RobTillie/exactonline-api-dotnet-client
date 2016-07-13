@@ -43,13 +43,12 @@ namespace ExactOnline.Client.Sdk.Helpers
 		/// <param name="endpoint">{URI}/{Division}/{Resource}/{Entity}</param>
 		/// <param name="oDataQuery">oData Querystring</param>
 		/// <returns>String with API Response in Json Format</returns>
-		public string DoGetRequest(string endpoint, string oDataQuery)
+		public async Task<string> DoGetRequestAsync(string endpoint, string oDataQuery)
 		{
 			if (string.IsNullOrEmpty(endpoint)) throw new ArgumentException("Cannot perform request with empty endpoint");
 
-			var request = CreateRequest(endpoint, oDataQuery, HttpMethod.Get);
-
-			return GetResponse(request);
+			var request = await CreateRequestAsync(endpoint, oDataQuery, HttpMethod.Get);
+			return await GetResponseAsync(request);
 		}
 
 		/// <summary>
@@ -58,7 +57,7 @@ namespace ExactOnline.Client.Sdk.Helpers
 		/// <param name="endpoint">{URI}/{Division}/{Resource}/{Entity}</param>
 		/// <param name="postdata">String containing data of new entity in Json format</param>
 		/// <returns>String with API Response in Json Format</returns>
-		public string DoPostRequest(string endpoint, string postdata)
+		public async Task<string> DoPostRequestAsync(string endpoint, string postdata)
 		{
 			if (string.IsNullOrEmpty(endpoint) || string.IsNullOrEmpty(postdata)) throw new ArgumentException("Cannot perform request with empty endpoint or postdata");
 
@@ -69,8 +68,8 @@ namespace ExactOnline.Client.Sdk.Helpers
                 throw new BadRequestException();
             }
 
-            var request = CreateRequest(endpoint, null, HttpMethod.Put, postdata);
-            return GetResponse(request);
+            var request = await CreateRequestAsync(endpoint, null, HttpMethod.Put, postdata);
+            return await GetResponseAsync(request);
 		}
 
 		/// <summary>
@@ -79,7 +78,7 @@ namespace ExactOnline.Client.Sdk.Helpers
 		/// <param name="endpoint">{URI}/{Division}/{Resource}/{Entity}</param>
 		/// <param name="putData">String containing updated entity data in Json format</param>
 		/// <returns>String with API Response in Json Format</returns>
-		public string DoPutRequest(string endpoint, string putData)
+		public async Task<string> DoPutRequestAsync(string endpoint, string putData)
 		{
 			if (string.IsNullOrEmpty(endpoint) || string.IsNullOrEmpty(putData)) throw new ArgumentException("Cannot perform request with empty endpoint or putData");
 
@@ -89,8 +88,8 @@ namespace ExactOnline.Client.Sdk.Helpers
                 throw new BadRequestException();
             }
 
-            var request = CreateRequest(endpoint, null, HttpMethod.Put, putData);
-			return GetResponse(request);
+            var request = await CreateRequestAsync(endpoint, null, HttpMethod.Put, putData);
+			return await GetResponseAsync(request);
 		}
 
 		/// <summary>
@@ -98,13 +97,12 @@ namespace ExactOnline.Client.Sdk.Helpers
 		/// </summary>
 		/// <param name="endpoint">{URI}/{Division}/{Resource}/{Entity}</param>
 		/// <returns>String with API Response in Json Format</returns>
-		public string DoDeleteRequest(string endpoint)
+		public async Task<string> DoDeleteRequestAsync(string endpoint)
 		{
 			if (string.IsNullOrEmpty(endpoint)) throw new ArgumentException("Cannot perform request with empty endpoint");
 
-			var request = CreateRequest(endpoint, null, HttpMethod.Delete);
-
-			return GetResponse(request);
+			var request = await CreateRequestAsync(endpoint, null, HttpMethod.Delete);
+			return await GetResponseAsync(request);
 		}
 
 		/// <summary>
@@ -112,20 +110,20 @@ namespace ExactOnline.Client.Sdk.Helpers
 		/// </summary>
 		/// <param name="uri"></param>
 		/// <returns></returns>
-		public string DoCleanRequest(string uri) // Build for doing $count function
+		public async Task<string> DoCleanRequestAsync(string uri) // Build for doing $count function
 		{
-            var request = CreateRequest(uri, null, HttpMethod.Get);
-			return GetResponse(request, false);
+            var request = await CreateRequestAsync(uri, null, HttpMethod.Get);
+			return await GetResponseAsync(request, false);
 		}
 
-		public int GetCurrentDivision(string website)
+		public async Task<int> GetCurrentDivisionAsync(string website)
 		{
 			var url = website + "/api/v1/current/Me" ;
 			const string oDataQuery = "$select=CurrentDivision";
 			
-			var request = CreateRequest(url, oDataQuery, HttpMethod.Get);
-			var response = GetResponse(request);
-			var jsonObject = JsonConvert.DeserializeObject<dynamic>(response);
+			var request = await CreateRequestAsync(url, oDataQuery, HttpMethod.Get);
+			var response = await GetResponseAsync(request);
+			var jsonObject = await JsonHelper.DeserializeObjectAsync<dynamic>(response);
 			
 			return (int)jsonObject.d["results"][0]["CurrentDivision"].Value;
 		}
@@ -134,7 +132,7 @@ namespace ExactOnline.Client.Sdk.Helpers
 
 		#region Private methods
 
-		private HttpRequestMessage CreateRequest(string url, string oDataQuery, HttpMethod method, string contentData = "")
+		private async Task<HttpRequestMessage> CreateRequestAsync(string url, string oDataQuery, HttpMethod method, string contentData = "")
 		{
 			if (!string.IsNullOrEmpty(oDataQuery))
 			{
@@ -142,7 +140,8 @@ namespace ExactOnline.Client.Sdk.Helpers
 			}
 
             var request = new HttpRequestMessage(method, url);
-			request.Headers.Add("Authorization", "Bearer " + _accessTokenDelegate());
+            var token = await _accessTokenDelegate();
+            request.Headers.Add("Authorization", "Bearer " + token);
 
             if(!string.IsNullOrEmpty(contentData))
                 request.Content = new StringContent(contentData, Encoding.UTF8, "application/json");
@@ -153,7 +152,7 @@ namespace ExactOnline.Client.Sdk.Helpers
 			return request;
 		}
 
-		private string GetResponse(HttpRequestMessage request, bool addAcceptHeader = true)
+		private async Task<string> GetResponseAsync(HttpRequestMessage request, bool addAcceptHeader = true)
 		{
 			// Grab the response
 			var responseValue = string.Empty;
@@ -167,9 +166,8 @@ namespace ExactOnline.Client.Sdk.Helpers
                 if (addAcceptHeader)
                     client.DefaultRequestHeaders.Add("Accept", "application/json");
 
-                // TODO: we could make this async
-                response = client.SendAsync(request).Result;
-                responseValue = response.Content.ReadAsStringAsync().Result;
+                response = await client.SendAsync(request);
+                responseValue = await response.Content.ReadAsStringAsync();
                 response.EnsureSuccessStatusCode();
 			}
             catch (HttpRequestException ex)
@@ -192,7 +190,7 @@ namespace ExactOnline.Client.Sdk.Helpers
                         throw new NotFoundException(ex.Message, ex); // 404
 
 					case HttpStatusCode.InternalServerError: // 500
-                        throw new InternalServerErrorException(GetInternalServerErrorMessage(response), ex);
+                        throw new InternalServerErrorException(await GetInternalServerErrorMessageAsync(response), ex);
 
 					case HttpStatusCode.MethodNotAllowed: // 405
 						throw new BadRequestException(ex.Message, ex);
@@ -206,13 +204,13 @@ namespace ExactOnline.Client.Sdk.Helpers
 			return responseValue;
 		}
 
-        private static string GetInternalServerErrorMessage(HttpResponseMessage response)
+        private static async Task<string> GetInternalServerErrorMessageAsync(HttpResponseMessage response)
         {
             var errorMessage = response.Content.ReadAsStringAsync().Result;
 
             try
             {
-                var deserializedObject = JsonConvert.DeserializeObject<dynamic>(errorMessage);
+                var deserializedObject = await JsonHelper.DeserializeObjectAsync<dynamic>(errorMessage);
                 return deserializedObject["error"]["message"]["value"];
             }
             catch

@@ -1,4 +1,6 @@
-﻿namespace ExactOnline.Client.Sdk.Delegates
+﻿using System.Threading.Tasks;
+
+namespace ExactOnline.Client.Sdk.Delegates
 {
-	public delegate string AccessTokenManagerDelegate();
+	public delegate Task<string> AccessTokenManagerDelegate();
 }

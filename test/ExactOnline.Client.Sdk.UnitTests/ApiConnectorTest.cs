@@ -2,6 +2,7 @@
 using ExactOnline.Client.Sdk.Helpers;
 using ExactOnline.Client.Sdk.Interfaces;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Threading.Tasks;
 
 namespace ExactOnline.Client.Sdk.UnitTests
 {
@@ -10,7 +11,7 @@ namespace ExactOnline.Client.Sdk.UnitTests
 	{
 		IApiConnector _connector;
 
-		private static string GetAccessToken()
+		private static async Task<string> GetAccessToken()
 		{
 			return "accessToken";
 		}
@@ -37,9 +38,9 @@ namespace ExactOnline.Client.Sdk.UnitTests
 
 		[TestMethod]
 		[TestCategory("Unit Test"), ExpectedException(typeof(ArgumentException))]
-		public void ApiConnector_DoDeleteRequest_With_EmptyValues_Fails()
+		public async Task ApiConnector_DoDeleteRequest_With_EmptyValues_Fails()
 		{
-			_connector.DoDeleteRequest(string.Empty);
+			await _connector.DoDeleteRequestAsync(string.Empty);
 		}
 
 

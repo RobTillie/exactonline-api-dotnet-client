@@ -59,7 +59,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\ExactOnline.Client.Models.CSharp\ExactOnline.Client.Models.CSharp.csproj">
+    <ProjectReference Include="..\ExactOnline.Client.Models.CSharp\ExactOnline.Client.Models.CSharp.csproj">
       <Project>{9ef805ba-1d9d-4847-8f96-98bbccfb6b16}</Project>
       <Name>ExactOnline.Client.Models.CSharp</Name>
     </ProjectReference>

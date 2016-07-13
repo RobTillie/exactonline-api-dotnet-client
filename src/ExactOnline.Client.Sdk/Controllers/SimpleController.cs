@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using ExactOnline.Client.Sdk.Helpers;
+using System.Threading.Tasks;
 
 namespace ExactOnline.Client.Sdk.Controllers
 {
@@ -23,10 +24,10 @@ namespace ExactOnline.Client.Sdk.Controllers
 		/// </summary>
 		/// <param name="query">oData query</param>
 		/// <returns></returns>
-		public List<dynamic> GetDynamic(string query)
+		public async Task<List<dynamic>> GetDynamicAsync(string query)
 		{
-			string response = _conn.Get(query);
-            var jsonObject = ApiResponseCleaner.GetJsonArray(response);
+			string response = await _conn.GetAsync(query);
+            var jsonObject = await ApiResponseCleaner.GetJsonArrayAsync(response);
 
 			var converter = new EntityConverter();
 			List<dynamic> list = converter.ConvertJsonToDynamicObjectList(jsonObject);

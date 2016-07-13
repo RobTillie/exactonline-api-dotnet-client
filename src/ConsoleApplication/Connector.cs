@@ -1,5 +1,6 @@
 ﻿using ExactOnline.Client.OAuth;
 using System;
+using System.Threading.Tasks;
 
 namespace ConsoleApplication
 {
@@ -26,7 +27,7 @@ namespace ConsoleApplication
 			_authorization = new UserAuthorization();
 		}
 
-		public string GetAccessToken()
+		public async Task<string> GetAccessToken()
 		{
 			UserAuthorizations.Authorize(_authorization, EndPoint, _clientId, _clientSecret, _callbackUrl);
 

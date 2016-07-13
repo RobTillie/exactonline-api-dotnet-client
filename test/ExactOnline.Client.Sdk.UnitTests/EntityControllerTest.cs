@@ -4,6 +4,7 @@ using ExactOnline.Client.Sdk.Helpers;
 using ExactOnline.Client.Sdk.UnitTests.MockObjects;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace ExactOnline.Client.Sdk.UnitTests
 {
@@ -15,7 +16,7 @@ namespace ExactOnline.Client.Sdk.UnitTests
 		
 		[TestMethod]
 		[TestCategory("Unit Test")]
-		public void EntityController_Update_WithNewLinkedEntity_Succeeds()
+		public async Task EntityController_Update_WithNewLinkedEntity_Succeeds()
 		{
 			var controllerMock = new ApiConnectionEntityControllerMock();
 			var apiConnectorMock = new ApiConnectorMock();
@@ -30,7 +31,7 @@ namespace ExactOnline.Client.Sdk.UnitTests
 			var line = new SalesInvoiceLine {Description = "InvoiceLine2"};
 			invoice.SalesInvoiceLines = new List<SalesInvoiceLine> { line }; 
 
-			entityController.Update(invoice);
+			await entityController.UpdateAsync(invoice);
 
 			string data = controllerMock.Data;
 			Assert.IsTrue(data.Contains(@"""Description"":""Description2"""));
@@ -39,7 +40,7 @@ namespace ExactOnline.Client.Sdk.UnitTests
 
 		[TestMethod]
 		[TestCategory("Unit Test")]
-		public void EntityController_Update_WithExistingLinkedEntity_Succeeds()
+		public async Task EntityController_Update_WithExistingLinkedEntity_Succeeds()
 		{
 			var controllerMock = new ApiConnectionEntityControllerMock();
 			var connector = new ApiConnectorMock();
@@ -57,14 +58,14 @@ namespace ExactOnline.Client.Sdk.UnitTests
 			invoice.Description = "Description2";
 			line.Description = "InvoiceLine2";
 
-			entityController.Update(invoice);
+			await entityController.UpdateAsync(invoice);
 			string data = controllerMock.Data;
 			Assert.AreEqual(@"{""Description"":""Description2"",""SalesInvoiceLines"":[{""Description"":""InvoiceLine2""}]}", data);
 		}
 		
 		[TestMethod]
 		[TestCategory("Unit Test")]
-		public void EntityController_Update_WithNoFieldsAltered_Succeeds()
+		public async Task EntityController_Update_WithNoFieldsAltered_Succeeds()
 		{
 			var controllerMock = new ApiConnectionEntityControllerMock();
 			var connector = new ApiConnectorMock();
@@ -80,7 +81,7 @@ namespace ExactOnline.Client.Sdk.UnitTests
 
 			Assert.IsTrue(returnValue);
 
-			entityController.Update(invoice);
+			await entityController.UpdateAsync(invoice);
 			string data = controllerMock.Data;
 			Assert.AreEqual("", data);
 		}
@@ -88,7 +89,7 @@ namespace ExactOnline.Client.Sdk.UnitTests
 
 		[TestMethod]
 		[TestCategory("Unit Test")]
-		public void EntityController_Update_WithOnlyLinkedEntityFieldsAltered_Succeeds()
+		public async Task EntityController_Update_WithOnlyLinkedEntityFieldsAltered_Succeeds()
 		{
 			var controllerMock = new ApiConnectionEntityControllerMock();
 			var connector = new ApiConnectorMock();
@@ -104,7 +105,7 @@ namespace ExactOnline.Client.Sdk.UnitTests
 
 			// Change State
 			line.Description = "InvoiceLine2";
-			ec.Update(invoice);
+			await ec.UpdateAsync(invoice);
 
 			string result = controllerMock.Data;
 			const string expected = "{\"SalesInvoiceLines\":[{\"Description\":\"InvoiceLine2\"}]}";

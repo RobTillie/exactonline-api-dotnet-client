@@ -1,4 +1,5 @@
 ﻿using ExactOnline.Client.Sdk.Interfaces;
+using System.Threading.Tasks;
 
 namespace ExactOnline.Client.Sdk.UnitTests.MockObjects
 {
@@ -6,12 +7,12 @@ namespace ExactOnline.Client.Sdk.UnitTests.MockObjects
 	{
 		#region IApiConnection Members
 
-		int IApiConnection.Count()
+		async Task<int> IApiConnection.CountAsync()
 		{
 			return 0;
 		}
 
-		string IApiConnection.Get(string parameters)
+        async Task<string> IApiConnection.GetAsync(string parameters)
 		{
 			const string correctJsonArray = @"{
 			""d"": {
@@ -285,7 +286,7 @@ namespace ExactOnline.Client.Sdk.UnitTests.MockObjects
 			return correctJsonArray;
 		}
 
-		string IApiConnection.GetEntity(string keyname, string guid, string parameters)
+        async Task<string> IApiConnection.GetEntityAsync(string keyname, string guid, string parameters)
 		{
 			const string correctJsonObject = @"{
 	""d"": {
@@ -423,17 +424,17 @@ namespace ExactOnline.Client.Sdk.UnitTests.MockObjects
 			return correctJsonObject;
 		}
 
-		string IApiConnection.Post(string data)
+        async Task<string> IApiConnection.PostAsync(string data)
 		{
 			return "";
 		}
 
-		bool IApiConnection.Put(string keyName, string guid, string data)
+        async Task<bool> IApiConnection.PutAsync(string keyName, string guid, string data)
 		{
 			return true;
 		}
 
-		bool IApiConnection.Delete(string keyName, string guid)
+        async Task<bool> IApiConnection.DeleteAsync(string keyName, string guid)
 		{
 			return true;
 		}

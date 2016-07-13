@@ -5,6 +5,7 @@ using System.Linq;
 using ExactOnline.Client.Sdk.Exceptions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using System.Threading.Tasks;
 
 namespace ExactOnline.Client.Sdk.Helpers
 {
@@ -20,11 +21,11 @@ namespace ExactOnline.Client.Sdk.Helpers
 		/// </summary>
 		/// <param name="response"></param>
 		/// <returns></returns>
-		public static JObject GetJsonObject(string response)
+		public static async Task<JObject> GetJsonObjectAsync(string response)
 		{
             try
             {
-                var dict = JsonConvert.DeserializeObject<JObject>(response, EntityConverter.GlobalJsonSerializerSettings);
+                var dict = await JsonHelper.DeserializeObjectAsync<JObject>(response, EntityConverter.GlobalJsonSerializerSettings);
                 var d = dict["d"] as JObject;
                 CleanObject(d);
 
@@ -39,11 +40,11 @@ namespace ExactOnline.Client.Sdk.Helpers
 		/// <summary>
 		/// Fetch Json Array (Json within ['d']['results']) from response
 		/// </summary>
-        public static JArray GetJsonArray(string response)
+        public static async Task<JArray> GetJsonArrayAsync(string response)
         {
             try
             {
-                var obj = JsonConvert.DeserializeObject(response);
+                var obj = await JsonHelper.DeserializeObjectAsync(response);
 
                 if (obj is JArray) return (JArray)obj;
 

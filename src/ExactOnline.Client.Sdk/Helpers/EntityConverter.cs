@@ -5,6 +5,7 @@ using ExactOnline.Client.Sdk.Delegates;
 using ExactOnline.Client.Sdk.Exceptions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using System.Threading.Tasks;
 
 namespace ExactOnline.Client.Sdk.Helpers
 {
@@ -53,9 +54,9 @@ namespace ExactOnline.Client.Sdk.Helpers
 		/// </summary>
 		/// <param name="obj">Dynamic Object to Convert</param>
 		/// <returns>Json String</returns>
-		public string ConvertDynamicObjectToJson(dynamic obj)
+		public async Task<string> ConvertDynamicObjectToJsonAsync(dynamic obj)
 		{
-			string json = JsonConvert.SerializeObject(obj);
+			string json = await JsonHelper.SerializeObjectAsync(obj);
 			return json;
 		}
 
@@ -66,9 +67,9 @@ namespace ExactOnline.Client.Sdk.Helpers
 		/// <param name="entity">entity</param>
 		/// <param name="entityControllerDelegate">Delegate for entitycontroller</param>
 		/// <returns>Json String</returns>
-		public string ConvertObjectToJson<T>(T entity, GetEntityController entityControllerDelegate)
+		public async Task<string> ConvertObjectToJsonAsync<T>(T entity, GetEntityController entityControllerDelegate)
 		{
-			return JsonConvert.SerializeObject(entity, new ExactOnlineJsonConverter());
+			return await JsonHelper.SerializeObjectAsync(entity, new ExactOnlineJsonConverter());
 		}
 
 		/// <summary>
@@ -81,9 +82,9 @@ namespace ExactOnline.Client.Sdk.Helpers
 		/// <param name="entity">Current State of the Entity</param>
 		/// <param name="entityControllerDelegate">Delegate for entitycontroller</param>
 		/// <returns>Json String</returns>
-		public string ConvertObjectToJson<T>(T originalEntity, T entity, GetEntityController entityControllerDelegate)
+		public async Task<string> ConvertObjectToJsonAsync<T>(T originalEntity, T entity, GetEntityController entityControllerDelegate)
 		{
-			return JsonConvert.SerializeObject(entity, new ExactOnlineJsonConverter(originalEntity, entityControllerDelegate));
+			return await JsonHelper.SerializeObjectAsync(entity, new ExactOnlineJsonConverter(originalEntity, entityControllerDelegate));
 		}
 
 		/// <summary>
