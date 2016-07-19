@@ -12,9 +12,9 @@ namespace ExactOnline.Client.Sdk.Controllers
     /// </summary>
     public class ExactOnlineClient
     {
-        private readonly ApiConnector _apiConnector;
-        private readonly string _exactOnlineApiUrl;     // https://start.exactonline.nl/api/v1
-        private readonly ControllerList _controllers;
+        private ApiConnector _apiConnector;
+        private string _exactOnlineApiUrl;     // https://start.exactonline.nl/api/v1
+        private ControllerList _controllers;
         private int _division;
 
         #region Constructors
@@ -25,7 +25,11 @@ namespace ExactOnline.Client.Sdk.Controllers
         /// <param name="exactOnlineUrl">The Exact Online URL for your country</param>
         /// <param name="division">Division number</param>
         /// <param name="accesstokenDelegate">Delegate that will be executed the access token is expired</param>
-        public ExactOnlineClient(string exactOnlineUrl, int division, AccessTokenManagerDelegate accesstokenDelegate)
+        public ExactOnlineClient()
+        {
+        }
+
+        public async Task Initialize(string exactOnlineUrl, AccessTokenManagerDelegate accesstokenDelegate, int division = 0)
         {
             // Set culture for correct deserializing of API Response (comma and points)
             _apiConnector = new ApiConnector(accesstokenDelegate);
@@ -34,20 +38,10 @@ namespace ExactOnline.Client.Sdk.Controllers
             if (!exactOnlineUrl.EndsWith("/")) exactOnlineUrl += "/";
             _exactOnlineApiUrl = exactOnlineUrl + "api/v1/";
 
-            _division = (division > 0) ? division : GetDivision().Result;
+            _division = (division > 0) ? division : await GetDivision();
             string serviceRoot = _exactOnlineApiUrl + _division + "/";
 
             _controllers = new ControllerList(_apiConnector, serviceRoot);
-        }
-
-        /// <summary>
-        /// Create instance of ExactClient
-        /// </summary>
-        /// <param name="exactOnlineUrl">{URI}/</param>
-        /// <param name="accesstokenDelegate">Valid oAuth AccessToken</param>
-        public ExactOnlineClient(string exactOnlineUrl, AccessTokenManagerDelegate accesstokenDelegate)
-            : this(exactOnlineUrl, 0, accesstokenDelegate)
-        {
         }
 
         #endregion
