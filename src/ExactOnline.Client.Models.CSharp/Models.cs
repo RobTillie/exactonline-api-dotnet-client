@@ -5571,10 +5571,10 @@ namespace ExactOnline.Client.Models
         public Int32 BatchNumber { get; set; }
         ///<![CDATA[Creation date]]>
         [SDKFieldType(FieldType.ReadOnly)]
-        public DateTime Created { get; set; }
+        public DateTime? Created { get; set; }
         ///<![CDATA[User ID of creator]]>
         [SDKFieldType(FieldType.ReadOnly)]
-        public Guid Creator { get; set; }
+        public Guid? Creator { get; set; }
         ///<![CDATA[Name of creator]]>
         [SDKFieldType(FieldType.ReadOnly)]
         public string CreatorFullName { get; set; }
@@ -5586,7 +5586,7 @@ namespace ExactOnline.Client.Models
         [SDKFieldType(FieldType.ReadOnly)]
         public Int32 Division { get; set; }
         ///<![CDATA[Reference to document]]>
-        public Guid Document { get; set; }
+        public Guid? Document { get; set; }
         ///<![CDATA[Document number]]>
         [SDKFieldType(FieldType.ReadOnly)]
         public Int32 DocumentNumber { get; set; }
@@ -5594,9 +5594,9 @@ namespace ExactOnline.Client.Models
         [SDKFieldType(FieldType.ReadOnly)]
         public string DocumentSubject { get; set; }
         ///<![CDATA[Date when payment should be done]]>
-        public DateTime DueDate { get; set; }
+        public DateTime? DueDate { get; set; }
         ///<![CDATA[Entry date]]>
-        public DateTime EntryDate { get; set; }
+        public DateTime? EntryDate { get; set; }
         ///<![CDATA[Primary key]]>
         public Guid EntryID { get; set; }
         ///<![CDATA[Entry number]]>
@@ -5617,7 +5617,7 @@ namespace ExactOnline.Client.Models
         public DateTime Modified { get; set; }
         ///<![CDATA[User ID of modifier]]>
         [SDKFieldType(FieldType.ReadOnly)]
-        public Guid Modifier { get; set; }
+        public Guid? Modifier { get; set; }
         ///<![CDATA[Name of modifier]]>
         [SDKFieldType(FieldType.ReadOnly)]
         public string ModifierFullName { get; set; }
@@ -5646,7 +5646,7 @@ namespace ExactOnline.Client.Models
         [SDKFieldType(FieldType.ReadOnly)]
         public string StatusDescription { get; set; }
         ///<![CDATA[Reference to supplier (account)]]>
-        public Guid Supplier { get; set; }
+        public Guid? Supplier { get; set; }
         ///<![CDATA[Name of supplier]]>
         [SDKFieldType(FieldType.ReadOnly)]
         public string SupplierName { get; set; }
@@ -6451,17 +6451,17 @@ namespace ExactOnline.Client.Models
         public Int32 BatchNumber { get; set; }
         ///<![CDATA[Creation date]]>
         [SDKFieldType(FieldType.ReadOnly)]
-        public DateTime Created { get; set; }
+        public DateTime? Created { get; set; }
         ///<![CDATA[User ID of creator]]>
         [SDKFieldType(FieldType.ReadOnly)]
-        public Guid Creator { get; set; }
+        public Guid? Creator { get; set; }
         ///<![CDATA[Name of creator]]>
         [SDKFieldType(FieldType.ReadOnly)]
         public string CreatorFullName { get; set; }
         ///<![CDATA[Currency for the invoice. By default this is the currency of the administration]]>
         public string Currency { get; set; }
         ///<![CDATA[Reference to customer (account)]]>
-        public Guid Customer { get; set; }
+        public Guid? Customer { get; set; }
         ///<![CDATA[Name of customer]]>
         [SDKFieldType(FieldType.ReadOnly)]
         public string CustomerName { get; set; }
@@ -6471,7 +6471,7 @@ namespace ExactOnline.Client.Models
         [SDKFieldType(FieldType.ReadOnly)]
         public Int32 Division { get; set; }
         ///<![CDATA[Document that is manually linked to the invoice]]>
-        public Guid Document { get; set; }
+        public Guid? Document { get; set; }
         ///<![CDATA[Number of the document]]>
         [SDKFieldType(FieldType.ReadOnly)]
         public Int32 DocumentNumber { get; set; }
@@ -6479,9 +6479,9 @@ namespace ExactOnline.Client.Models
         [SDKFieldType(FieldType.ReadOnly)]
         public string DocumentSubject { get; set; }
         ///<![CDATA[The due date for payments. This date is calculated based on the EntryDate and the Paymentcondition]]>
-        public DateTime DueDate { get; set; }
+        public DateTime? DueDate { get; set; }
         ///<![CDATA[The date when the invoice is entered]]>
-        public DateTime EntryDate { get; set; }
+        public DateTime? EntryDate { get; set; }
         ///<![CDATA[The unique ID of the entry. Via this ID all transaction lines of a single entry can be retrieved]]>
         public Guid EntryID { get; set; }
         ///<![CDATA[Entry number]]>
@@ -6506,7 +6506,7 @@ namespace ExactOnline.Client.Models
         public DateTime Modified { get; set; }
         ///<![CDATA[User ID of modifier]]>
         [SDKFieldType(FieldType.ReadOnly)]
-        public Guid Modifier { get; set; }
+        public Guid? Modifier { get; set; }
         ///<![CDATA[Name of modifier]]>
         [SDKFieldType(FieldType.ReadOnly)]
         public string ModifierFullName { get; set; }
