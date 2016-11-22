@@ -6503,7 +6503,7 @@ namespace ExactOnline.Client.Models
         public string JournalDescription { get; set; }
         ///<![CDATA[Last modified date]]>
         [SDKFieldType(FieldType.ReadOnly)]
-        public DateTime Modified { get; set; }
+        public DateTime? Modified { get; set; }
         ///<![CDATA[User ID of modifier]]>
         [SDKFieldType(FieldType.ReadOnly)]
         public Guid? Modifier { get; set; }

@@ -198,6 +198,11 @@ namespace ExactOnline.Client.Sdk.Helpers
 
 				throw;
 			}
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Unhandled exception occurred: {ex.ToString()}");
+                throw;
+            }
 
 			Debug.WriteLine(responseValue);
 

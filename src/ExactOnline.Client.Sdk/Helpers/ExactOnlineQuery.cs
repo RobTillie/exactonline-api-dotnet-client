@@ -223,7 +223,7 @@ namespace ExactOnline.Client.Sdk.Helpers
                 var request = await this.Skip(round * toTake).Top(toTake).GetAsync();
                 received.AddRange(request);
                 round++;
-                hasNew = request.Any();
+                hasNew = request.Count == toTake;
             }
             return received;
         }

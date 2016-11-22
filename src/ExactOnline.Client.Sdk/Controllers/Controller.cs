@@ -72,8 +72,9 @@ namespace ExactOnline.Client.Sdk.Controllers
 		/// <returns>List of entity Objects</returns>
 		public async Task<List<T>> GetAsync(string query)
 		{
-			// Get the response and convert it to a list of entities of the specific type
-			var response = await _conn.GetAsync(query);
+            // Get the response and convert it to a list of entities of the specific type
+
+            var response = await _conn.GetAsync(query);
 			var jsonArray = await ApiResponseCleaner.GetJsonArrayAsync(response);
 
 			var rc = new EntityConverter();
