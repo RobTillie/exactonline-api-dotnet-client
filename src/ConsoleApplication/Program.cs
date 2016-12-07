@@ -37,11 +37,25 @@ namespace ConsoleApplication
             var account = client.For<Account>().Top(1).Select(fields).GetAsync().Result.FirstOrDefault();
             Debug.WriteLine("Account {0} - {1}", account.Code.TrimStart(), account.Name);
 
-            fields = new[] { "InvoiceNumber", "AmountDC", "CustomerName", "Document", "DueDate", "EntryDate", "Status" };
-            var filter = $"ReportingYear eq 2015";
-            var data = await client.For<SalesEntry>().Select(fields).Where(filter).GetAllAsync();
+            //fields = new[] { "InvoiceNumber", "AmountDC", "CustomerName", "Document", "DueDate", "EntryDate", "Status" };
+            //var filter = $"ReportingYear eq 2015";
+            //var data = await client.For<SalesEntry>().Select(fields).Where(filter).GetAllAsync();
+            //Debug.WriteLine($"{data.Count} Salesentries");
 
-            Debug.WriteLine($"{data.Count} Salesentries");
+            var defaultMailbox = await client.GetDefaultMailbox();
+            
+            // Create the mail
+            // Type 1000 = Inkoop factuur
+
+            var msg = new MailMessage
+            {
+                RecipientMailboxID = defaultMailbox.ID,
+                SenderMailboxID = defaultMailbox.ID,
+                Type = 1000,
+                Subject = "hello"
+            };
+
+            var result = await client.For<MailMessage>().InsertAsync(msg);
 
             return 0;
         }

@@ -14,6 +14,7 @@ namespace ExactOnline.Client.Sdk.Controllers
     {
         private ApiConnector _apiConnector;
         private string _exactOnlineApiUrl;     // https://start.exactonline.nl/api/v1
+        private string _serviceRoot;
         private ControllerList _controllers;
         private int _division;
 
@@ -39,9 +40,9 @@ namespace ExactOnline.Client.Sdk.Controllers
             _exactOnlineApiUrl = exactOnlineUrl + "api/v1/";
 
             _division = (division > 0) ? division : await GetDivision();
-            string serviceRoot = _exactOnlineApiUrl + _division + "/";
+            _serviceRoot = _exactOnlineApiUrl + _division + "/";
 
-            _controllers = new ControllerList(_apiConnector, serviceRoot);
+            _controllers = new ControllerList(_apiConnector, _serviceRoot);
         }
 
         #endregion
@@ -60,6 +61,16 @@ namespace ExactOnline.Client.Sdk.Controllers
             var converter = new EntityConverter();
             var currentMe = converter.ConvertJsonArrayToObjectList<Me>(jsonObject);
             return currentMe.FirstOrDefault();
+        }
+
+        public async Task<Mailbox> GetDefaultMailbox()
+        {
+            var conn = new ApiConnection(_apiConnector, _serviceRoot + "read/mailbox/DefaultMailbox");
+            string response = await conn.GetAsync("$select=*");
+            var jsonObject = await ApiResponseCleaner.GetJsonArrayAsync(response);
+            var converter = new EntityConverter();
+            var mailbox = converter.ConvertJsonArrayToObjectList<Mailbox>(jsonObject);
+            return mailbox.FirstOrDefault();
         }
 
         /// <summary>

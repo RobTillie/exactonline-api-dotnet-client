@@ -68,7 +68,7 @@ namespace ExactOnline.Client.Sdk.Helpers
                 throw new BadRequestException();
             }
 
-            var request = await CreateRequestAsync(endpoint, null, HttpMethod.Put, postdata);
+            var request = await CreateRequestAsync(endpoint, null, HttpMethod.Post, postdata);
             return await GetResponseAsync(request);
 		}
 

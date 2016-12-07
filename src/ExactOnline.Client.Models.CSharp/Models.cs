@@ -4134,23 +4134,23 @@ namespace ExactOnline.Client.Models
     public class Mailbox
     {
         ///<![CDATA[The account this mailbox belongs to. Can be empty if the owner of the mailbox isn't an Exact Online customer yet]]>
-        public Guid Account { get; set; }
+        public Guid? Account { get; set; }
         ///<![CDATA[Name of Account]]>
         [SDKFieldType(FieldType.ReadOnly)]
         public string AccountName { get; set; }
         ///<![CDATA[Creation date]]>
         [SDKFieldType(FieldType.ReadOnly)]
-        public DateTime Created { get; set; }
+        public DateTime? Created { get; set; }
         ///<![CDATA[User ID of creator]]>
         [SDKFieldType(FieldType.ReadOnly)]
-        public Guid Creator { get; set; }
+        public Guid? Creator { get; set; }
         ///<![CDATA[Name of creator]]>
         [SDKFieldType(FieldType.ReadOnly)]
         public string CreatorFullName { get; set; }
         ///<![CDATA[Extra description of the mailbox]]>
         public string Description { get; set; }
         ///<![CDATA[Only used when this mailbox is used for one specific administration, for example invoices to this mailbox will only be booked in this administration]]>
-        public Int32 ForDivision { get; set; }
+        public Int32? ForDivision { get; set; }
         ///<![CDATA[Description of ForDivision]]>
         [SDKFieldType(FieldType.ReadOnly)]
         public string ForDivisionDescription { get; set; }
@@ -4161,21 +4161,21 @@ namespace ExactOnline.Client.Models
         public string MailboxProperty { get; set; }
         ///<![CDATA[Last modified date]]>
         [SDKFieldType(FieldType.ReadOnly)]
-        public DateTime Modified { get; set; }
+        public DateTime? Modified { get; set; }
         ///<![CDATA[User ID of modifier]]>
         [SDKFieldType(FieldType.ReadOnly)]
-        public Guid Modifier { get; set; }
+        public Guid? Modifier { get; set; }
         ///<![CDATA[Name of modifier]]>
         [SDKFieldType(FieldType.ReadOnly)]
         public string ModifierFullName { get; set; }
         ///<![CDATA[Customers can decide if they want this mailbox to be visible by all. i.e. some other customer can see this in address maintenance for digital postbox of type Exact]]>
         public byte Publish { get; set; }
         ///<![CDATA[Type of mailbox. Exact / Government / Manual]]>
-        public Int16 Type { get; set; }
+        public Int16? Type { get; set; }
         ///<![CDATA[Date that this mailbox became valid]]>
-        public DateTime ValidFrom { get; set; }
+        public DateTime? ValidFrom { get; set; }
         ///<![CDATA[Date that this mailbox will not be valid anymore]]>
-        public DateTime ValidTo { get; set; }
+        public DateTime? ValidTo { get; set; }
     }
 
     [SupportedActionsSDK(true, true, false, false)]
@@ -4183,47 +4183,47 @@ namespace ExactOnline.Client.Models
     public class MailMessage
     {
         ///<![CDATA[Bank to/from which the mail message is sent/received. This is used for mail messages of type Bank only. It has an attachment containing the bank file. When used for a mail message of type bank, the value is reserved for internal use and will then be ignored.]]>
-        public Guid Bank { get; set; }
+        public Guid? Bank { get; set; }
         ///<![CDATA[Bank account for which the mail message is sent. This is used for mail messages of type Bank only. It has an attachment containing the bank export file. When used for a mail message of type bank, the value is reserved for internal use and will then be ignored.]]>
         public string BankAccount { get; set; }
         ///<![CDATA[Creation date]]>
         [SDKFieldType(FieldType.ReadOnly)]
-        public DateTime Created { get; set; }
+        public DateTime? Created { get; set; }
         ///<![CDATA[User ID of creator]]>
         [SDKFieldType(FieldType.ReadOnly)]
-        public Guid Creator { get; set; }
+        public Guid? Creator { get; set; }
         ///<![CDATA[Name of creator]]>
         [SDKFieldType(FieldType.ReadOnly)]
         public string CreatorFullName { get; set; }
         ///<![CDATA[Administration from which the mail message is sent. This is used for mail messages of type Bank only. When used for a mail message of type bank, the value is reserved for internal use and will then be ignored.]]>
-        public Int32 ForDivision { get; set; }
+        public Int32? ForDivision { get; set; }
         ///<![CDATA[Primary key]]>
         public Guid ID { get; set; }
         ///<![CDATA[Last modified date]]>
         [SDKFieldType(FieldType.ReadOnly)]
-        public DateTime Modified { get; set; }
+        public DateTime? Modified { get; set; }
         ///<![CDATA[User ID of modifier]]>
         [SDKFieldType(FieldType.ReadOnly)]
-        public Guid Modifier { get; set; }
+        public Guid? Modifier { get; set; }
         ///<![CDATA[Name of modifier]]>
         [SDKFieldType(FieldType.ReadOnly)]
         public string ModifierFullName { get; set; }
         ///<![CDATA[Specifies the operation upon dealing with the mailmessage (Kirean scan service)]]>
-        public Int16 Operation { get; set; }
+        public Int16? Operation { get; set; }
         ///<![CDATA[Provides a link to another MailMessage (Kirean scan service)]]>
-        public Guid OriginalMessage { get; set; }
+        public Guid? OriginalMessage { get; set; }
         ///<![CDATA[Subject of the OriginalMessage]]>
         [SDKFieldType(FieldType.ReadOnly)]
         public string OriginalMessageSubject { get; set; }
         ///<![CDATA[The partner key that was used: this refers to the application from which the message is originating. It is filled with a fixed partnerkey when created from within Exact Online]]>
-        public Guid PartnerKey { get; set; }
+        public Guid? PartnerKey { get; set; }
         ///<![CDATA[Specifies the number of lines of the returned MailMessage attachment (Kirean scan service)]]>
         public double? Quantity { get; set; }
         ///<![CDATA[Reference to the account that is receiving this mailmessage]]>
         [SDKFieldType(FieldType.ReadOnly)]
-        public Guid RecipientAccount { get; set; }
+        public Guid? RecipientAccount { get; set; }
         ///<![CDATA[Indiciates if the recipient deleted this message. If this is the case the recipient can't see it anymore and the sender can actually delete it]]>
-        public byte RecipientDeleted { get; set; }
+        public byte? RecipientDeleted { get; set; }
         ///<![CDATA[Mailbox of recipient]]>
         [SDKFieldType(FieldType.ReadOnly)]
         public string RecipientMailbox { get; set; }
@@ -4231,17 +4231,17 @@ namespace ExactOnline.Client.Models
         [SDKFieldType(FieldType.ReadOnly)]
         public string RecipientMailboxDescription { get; set; }
         ///<![CDATA[Mailbox ID of the recipient. The owner of this mailbox will see the message in the inbox]]>
-        public Guid RecipientMailboxID { get; set; }
+        public Guid? RecipientMailboxID { get; set; }
         ///<![CDATA[Status of the mail message, only the recipient can update this]]>
-        public Int16 RecipientStatus { get; set; }
+        public Int16? RecipientStatus { get; set; }
         ///<![CDATA[Description of RecipientStatus]]>
         [SDKFieldType(FieldType.ReadOnly)]
         public string RecipientStatusDescription { get; set; }
         ///<![CDATA[Reference to Account of Sender]]>
         [SDKFieldType(FieldType.ReadOnly)]
-        public Guid SenderAccount { get; set; }
+        public Guid? SenderAccount { get; set; }
         ///<![CDATA[Date the message was sent. Default the date the message is created, can be an earlier date when imported from xml (the date the xml was sent)]]>
-        public DateTime SenderDateSent { get; set; }
+        public DateTime? SenderDateSent { get; set; }
         ///<![CDATA[Indicates if the sender deleted the message. This means the sender can't see it anymore and the recipient can actually delete it]]>
         public byte SenderDeleted { get; set; }
         ///<![CDATA[IP address of the sender]]>
@@ -4253,13 +4253,13 @@ namespace ExactOnline.Client.Models
         [SDKFieldType(FieldType.ReadOnly)]
         public string SenderMailboxDescription { get; set; }
         ///<![CDATA[Mailbox ID of the sender. The owner of this mailbox will see the message in the sent items]]>
-        public Guid SenderMailboxID { get; set; }
+        public Guid? SenderMailboxID { get; set; }
         ///<![CDATA[Subject of the mail message]]>
         public string Subject { get; set; }
         ///<![CDATA[Provides a link between Exact Online and the banks]]>
         public string SynchronizationCode { get; set; }
         ///<![CDATA[Type of the mail message]]>
-        public Int32 Type { get; set; }
+        public Int32? Type { get; set; }
     }
 
     [SupportedActionsSDK(true, true, false, false)]
@@ -4275,19 +4275,19 @@ namespace ExactOnline.Client.Models
         public string AttachmentFileName { get; set; }
         ///<![CDATA[File size]]>
         [SDKFieldType(FieldType.ReadOnly)]
-        public Int64 FileSize { get; set; }
+        public Int64? FileSize { get; set; }
         ///<![CDATA[Primary key]]>
         public Guid ID { get; set; }
         ///<![CDATA[Reference to Mail message]]>
         public Guid MailMessageID { get; set; }
         ///<![CDATA[Reference to recepient account]]>
         [SDKFieldType(FieldType.ReadOnly)]
-        public Guid RecipientAccount { get; set; }
+        public Guid? RecipientAccount { get; set; }
         ///<![CDATA[Reference to sender account]]>
         [SDKFieldType(FieldType.ReadOnly)]
-        public Guid SenderAccount { get; set; }
+        public Guid? SenderAccount { get; set; }
         ///<![CDATA[Type of mail message attachment]]>
-        public Int32 Type { get; set; }
+        public Int32? Type { get; set; }
         ///<![CDATA[Description of Type]]>
         [SDKFieldType(FieldType.ReadOnly)]
         public string TypeDescription { get; set; }
