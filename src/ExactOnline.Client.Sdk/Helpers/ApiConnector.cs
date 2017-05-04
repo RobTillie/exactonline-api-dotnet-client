@@ -20,6 +20,7 @@ namespace ExactOnline.Client.Sdk.Helpers
 	public class ApiConnector : IApiConnector
 	{
 		private readonly AccessTokenManagerDelegate _accessTokenDelegate;
+        private readonly HttpClient httpClient = new HttpClient();
 
 		#region Constructor
 
@@ -161,12 +162,12 @@ namespace ExactOnline.Client.Sdk.Helpers
 			// Get response. If this fails: Throw the correct Exception (for testability)
 			try
 			{
-                var client = new HttpClient();
-                
                 if (addAcceptHeader)
-                    client.DefaultRequestHeaders.Add("Accept", "application/json");
+                {
+                    request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                }
 
-                response = await client.SendAsync(request);
+                response = await httpClient.SendAsync(request);
                 responseValue = await response.Content.ReadAsStringAsync();
                 response.EnsureSuccessStatusCode();
 			}
@@ -211,7 +212,7 @@ namespace ExactOnline.Client.Sdk.Helpers
 
         private static async Task<string> GetInternalServerErrorMessageAsync(HttpResponseMessage response)
         {
-            var errorMessage = response.Content.ReadAsStringAsync().Result;
+            var errorMessage = await response.Content.ReadAsStringAsync();
 
             try
             {

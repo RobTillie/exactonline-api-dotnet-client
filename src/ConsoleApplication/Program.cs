@@ -30,32 +30,43 @@ namespace ConsoleApplication
 
             var connector = new Connector(clientId, clientSecret, callbackUrl);
             var client = new ExactOnlineClient();
-            await client.Initialize(connector.EndPoint, connector.GetAccessToken);
+            await client.Initialize(connector.EndPoint, connector.GetAccessToken, 1001956);
+
+            var me = await client.CurrentMe();
+            Console.WriteLine(me.CurrentDivision);
 
             // Get the Code and Name of a random account in the administration
-            var fields = new[] { "Code", "Name" };
-            var account = client.For<Account>().Top(1).Select(fields).GetAsync().Result.FirstOrDefault();
-            Debug.WriteLine("Account {0} - {1}", account.Code.TrimStart(), account.Name);
+            //var fields = new[] { "Code", "Name" };
+            //var account = client.For<Account>().Top(1).Select(fields).GetAsync().Result.FirstOrDefault();
+            //Debug.WriteLine("Account {0} - {1}", account.Code.TrimStart(), account.Name);
 
             //fields = new[] { "InvoiceNumber", "AmountDC", "CustomerName", "Document", "DueDate", "EntryDate", "Status" };
             //var filter = $"ReportingYear eq 2015";
             //var data = await client.For<SalesEntry>().Select(fields).Where(filter).GetAllAsync();
             //Debug.WriteLine($"{data.Count} Salesentries");
 
-            var defaultMailbox = await client.GetDefaultMailbox();
-            
+            //var defaultMailbox = await client.GetDefaultMailbox();
+
             // Create the mail
             // Type 1000 = Inkoop factuur
 
-            var msg = new MailMessage
-            {
-                RecipientMailboxID = defaultMailbox.ID,
-                SenderMailboxID = defaultMailbox.ID,
-                Type = 1000,
-                Subject = "hello"
-            };
+            //var msg = new MailMessage
+            //{
+            //    RecipientMailboxID = defaultMailbox.ID,
+            //    SenderMailboxID = defaultMailbox.ID,
+            //    Type = 1000,
+            //    Subject = "hello"
+            //};
 
-            var result = await client.For<MailMessage>().InsertAsync(msg);
+            //var result = await client.For<MailMessage>().InsertAsync(msg);
+
+            var fields = new[] { "Code", "CustomerName", "CustomerCode", "Description" };
+            var divisions = await client.For<Division>().Select(fields).GetAllAsync();
+
+            foreach(var div in divisions)
+            {
+                Console.WriteLine($"{div.Code} - {div.CustomerName} - {div.CustomerCode} - {div.Description}");
+            }
 
             return 0;
         }

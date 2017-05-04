@@ -9075,6 +9075,8 @@ namespace ExactOnline.Client.Models
         public string TrackingNumber { get; set; }
         ///<![CDATA[Tracking number description]]>
         public string TrackingNumberDescription { get; set; }
+        ///<![CDATA[The type of the transactions in the grouping.]]>
+        public Int32 Type { get; set; }
         ///<![CDATA[Vat code]]>
         public string VATCode { get; set; }
         ///<![CDATA[Description of VATCode]]>
