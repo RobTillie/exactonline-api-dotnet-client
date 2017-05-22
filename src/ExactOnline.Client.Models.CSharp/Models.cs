@@ -2230,7 +2230,7 @@ namespace ExactOnline.Client.Models
 
     [SupportedActionsSDK(true, true, true, true)]
     [DataServiceKey("ID")]
-    public class DocumentAttachment
+    public class DocumentAttachment : SynchronizableBase, ISynchronizable
     {
         ///<![CDATA[Contains the attachment]]>
         public byte[] Attachment { get; set; }
@@ -4180,7 +4180,7 @@ namespace ExactOnline.Client.Models
 
     [SupportedActionsSDK(true, true, false, false)]
     [DataServiceKey("ID")]
-    public class MailMessage
+    public class MailMessage : SynchronizableBase, ISynchronizable, IModifiable
     {
         ///<![CDATA[Bank to/from which the mail message is sent/received. This is used for mail messages of type Bank only. It has an attachment containing the bank file. When used for a mail message of type bank, the value is reserved for internal use and will then be ignored.]]>
         public Guid? Bank { get; set; }
@@ -4188,7 +4188,7 @@ namespace ExactOnline.Client.Models
         public string BankAccount { get; set; }
         ///<![CDATA[Creation date]]>
         [SDKFieldType(FieldType.ReadOnly)]
-        public DateTime? Created { get; set; }
+        public DateTime Created { get; set; }
         ///<![CDATA[User ID of creator]]>
         [SDKFieldType(FieldType.ReadOnly)]
         public Guid? Creator { get; set; }
@@ -4201,7 +4201,7 @@ namespace ExactOnline.Client.Models
         public Guid ID { get; set; }
         ///<![CDATA[Last modified date]]>
         [SDKFieldType(FieldType.ReadOnly)]
-        public DateTime? Modified { get; set; }
+        public DateTime Modified { get; set; }
         ///<![CDATA[User ID of modifier]]>
         [SDKFieldType(FieldType.ReadOnly)]
         public Guid? Modifier { get; set; }
@@ -4264,7 +4264,7 @@ namespace ExactOnline.Client.Models
 
     [SupportedActionsSDK(true, true, false, false)]
     [DataServiceKey("ID")]
-    public class MailMessageAttachment
+    public class MailMessageAttachment : SynchronizableBase, ISynchronizable
     {
         ///<![CDATA[For performance reasons Attachment is Write-Only. The blob can be downloaded using the supplied Url]]>
         public byte[] Attachment { get; set; }
@@ -5559,7 +5559,7 @@ namespace ExactOnline.Client.Models
 
     [SupportedActionsSDK(true, true, true, true)]
     [DataServiceKey("EntryID")]
-    public class PurchaseEntry
+    public class PurchaseEntry : SynchronizableBase, ISynchronizable, IModifiable
     {
         ///<![CDATA[Amount in the default currency of the company]]>
         [SDKFieldType(FieldType.ReadOnly)]
@@ -5571,7 +5571,7 @@ namespace ExactOnline.Client.Models
         public Int32 BatchNumber { get; set; }
         ///<![CDATA[Creation date]]>
         [SDKFieldType(FieldType.ReadOnly)]
-        public DateTime? Created { get; set; }
+        public DateTime Created { get; set; }
         ///<![CDATA[User ID of creator]]>
         [SDKFieldType(FieldType.ReadOnly)]
         public Guid? Creator { get; set; }
@@ -6367,7 +6367,7 @@ namespace ExactOnline.Client.Models
 
     [SupportedActionsSDK(false, true, false, false)]
     [DataServiceKey("ID")]
-    public class ReportingBalance
+    public class ReportingBalance : SynchronizableBase, ISynchronizable
     {
         ///<![CDATA[The sum of the amounts of all transactions in the grouping.]]>
         public double? Amount { get; set; }
@@ -6439,7 +6439,7 @@ namespace ExactOnline.Client.Models
 
     [SupportedActionsSDK(true, true, true, true)]
     [DataServiceKey("EntryID")]
-    public class SalesEntry
+    public class SalesEntry : SynchronizableBase, ISynchronizable, IModifiable
     {
         ///<![CDATA[Amount in the default currency of the company. For the header lines (LineNumber = 0) of an entry this is the SUM(AmountDC) of all lines]]>
         [SDKFieldType(FieldType.ReadOnly)]
@@ -6451,7 +6451,7 @@ namespace ExactOnline.Client.Models
         public Int32 BatchNumber { get; set; }
         ///<![CDATA[Creation date]]>
         [SDKFieldType(FieldType.ReadOnly)]
-        public DateTime? Created { get; set; }
+        public DateTime Created { get; set; }
         ///<![CDATA[User ID of creator]]>
         [SDKFieldType(FieldType.ReadOnly)]
         public Guid? Creator { get; set; }
@@ -6503,7 +6503,7 @@ namespace ExactOnline.Client.Models
         public string JournalDescription { get; set; }
         ///<![CDATA[Last modified date]]>
         [SDKFieldType(FieldType.ReadOnly)]
-        public DateTime? Modified { get; set; }
+        public DateTime Modified { get; set; }
         ///<![CDATA[User ID of modifier]]>
         [SDKFieldType(FieldType.ReadOnly)]
         public Guid? Modifier { get; set; }
@@ -8923,7 +8923,7 @@ namespace ExactOnline.Client.Models
 
     [SupportedActionsSDK(false, true, false, false)]
     [DataServiceKey("ID")]
-    public class TransactionLine
+    public class TransactionLine : SynchronizableBase, ISynchronizable, IModifiable
     {
         ///<![CDATA[Reference to account]]>
         public Guid Account { get; set; }

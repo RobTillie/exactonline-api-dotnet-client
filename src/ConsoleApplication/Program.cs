@@ -30,7 +30,7 @@ namespace ConsoleApplication
 
             var connector = new Connector(clientId, clientSecret, callbackUrl);
             var client = new ExactOnlineClient();
-            await client.Initialize(connector.EndPoint, connector.GetAccessToken, 1001956);
+            await client.Initialize(connector.EndPoint, connector.GetAccessToken);
 
             var me = await client.CurrentMe();
             Console.WriteLine(me.CurrentDivision);
@@ -40,10 +40,16 @@ namespace ConsoleApplication
             //var account = client.For<Account>().Top(1).Select(fields).GetAsync().Result.FirstOrDefault();
             //Debug.WriteLine("Account {0} - {1}", account.Code.TrimStart(), account.Name);
 
-            //fields = new[] { "InvoiceNumber", "AmountDC", "CustomerName", "Document", "DueDate", "EntryDate", "Status" };
-            //var filter = $"ReportingYear eq 2015";
-            //var data = await client.For<SalesEntry>().Select(fields).Where(filter).GetAllAsync();
-            //Debug.WriteLine($"{data.Count} Salesentries");
+            var fields = new[] { "ID", "Created", "Modified" };
+            var filter = $"FinancialYear eq 2015";
+            //var data = await client.For<TransactionLine>().Select(fields).Where(filter).GetAllAsync();
+
+            var data = await client.For<TransactionLine>().Select(fields).Where(filter).GetAllModifiedAfterAsync(new DateTime(2017, 1, 13, 11, 00, 00));
+
+            foreach (var d in data)
+            {
+                Console.WriteLine($"{d.Created} | {d.Modified}");
+            }
 
             //var defaultMailbox = await client.GetDefaultMailbox();
 
@@ -60,13 +66,13 @@ namespace ConsoleApplication
 
             //var result = await client.For<MailMessage>().InsertAsync(msg);
 
-            var fields = new[] { "Code", "CustomerName", "CustomerCode", "Description" };
-            var divisions = await client.For<Division>().Select(fields).GetAllAsync();
+            //var fields = new[] { "Code", "CustomerName", "CustomerCode", "Description" };
+            //var divisions = await client.For<Division>().Select(fields).GetAllAsync();
 
-            foreach(var div in divisions)
-            {
-                Console.WriteLine($"{div.Code} - {div.CustomerName} - {div.CustomerCode} - {div.Description}");
-            }
+            //foreach(var div in divisions)
+            //{
+            //    Console.WriteLine($"{div.Code} - {div.CustomerName} - {div.CustomerCode} - {div.Description}");
+            //}
 
             return 0;
         }

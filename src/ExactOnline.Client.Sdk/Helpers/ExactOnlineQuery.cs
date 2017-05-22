@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using ExactOnline.Client.Sdk.Interfaces;
+using ExactOnline.Client.Models;
 
 namespace ExactOnline.Client.Sdk.Helpers
 {
@@ -40,10 +41,10 @@ namespace ExactOnline.Client.Sdk.Helpers
 			return this;
 		}
 
-		/// <summary>
-		/// Creates an 'and' clause to the query. This method can't be called before a where clause is set.
-		/// </summary>
-		public ExactOnlineQuery<T> And(string and)
+        /// <summary>
+        /// Creates an 'and' clause to the query. This method can't be called before a where clause is set.
+        /// </summary>
+        public ExactOnlineQuery<T> And(string and)
 		{
 			if (string.IsNullOrEmpty(and)) throw new ArgumentException("Query 'and' operator cannot be empty");
 			if (string.IsNullOrEmpty(_where)) throw new ArgumentException("Query 'and' operator cannot be used before 'where' operator is set");
@@ -62,11 +63,16 @@ namespace ExactOnline.Client.Sdk.Helpers
 
 			if (!string.IsNullOrEmpty(_where))
 			{
-				queryParts.Add(_where);
+                var completeWhere = _where;
+
+                foreach (var andPart in _and)
+                    completeWhere += " and " + andPart;
+
+				queryParts.Add(completeWhere);
 			}
 
 			// Add $filter
-			queryParts.AddRange(_and);
+			// queryParts.AddRange(_and);
 
 
 			// Add $select
@@ -226,6 +232,23 @@ namespace ExactOnline.Client.Sdk.Helpers
                 hasNew = request.Count == toTake;
             }
             return received;
+        }
+
+        public async Task<List<T>> GetAllModifiedAfterAsync(DateTime? modifiedAfter)
+        {
+            if(modifiedAfter.HasValue)
+            {
+                var modifiedFilter = $"Modified gt datetime'{modifiedAfter:yyyy-MM-ddTHH:mm:ss}'";
+
+                if (_where == null)
+                    Where(modifiedFilter);
+                else
+                    And(modifiedFilter);
+
+                OrderBy("Modified asc");
+            }
+
+            return await GetAllAsync();
         }
 
         /// <summary>
