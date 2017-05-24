@@ -25,7 +25,10 @@ namespace ExactOnline.Client.Models
 
     public abstract class SynchronizableBase : ISynchronizable
     {
+        [JsonIgnore]
+        [PrimaryKey, AutoIncrement]
         public int LocalId { get; set; }
+        [JsonIgnore]
         public string RemoteId { get; set; }
     }
 }

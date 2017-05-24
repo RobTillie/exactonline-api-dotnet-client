@@ -1,5 +1,6 @@
 ﻿using ExactOnline.Client.Models;
 using ExactOnline.Client.Sdk.Controllers;
+using ExactOnline.Client.Sdk.Helpers;
 using System;
 using System.Diagnostics;
 using System.Linq;
@@ -40,18 +41,30 @@ namespace ConsoleApplication
             //var account = client.For<Account>().Top(1).Select(fields).GetAsync().Result.FirstOrDefault();
             //Debug.WriteLine("Account {0} - {1}", account.Code.TrimStart(), account.Name);
 
-            var fields = new[] { "ID", "Created", "Modified" };
-            var filter = $"FinancialYear eq 2015";
+            //var fields = new[] { "ID", "Created", "Modified" };
+            //var filter = $"FinancialYear eq 2015";
             //var data = await client.For<TransactionLine>().Select(fields).Where(filter).GetAllAsync();
 
-            var data = await client.For<TransactionLine>().Select(fields).Where(filter).GetAllModifiedAfterAsync(new DateTime(2017, 1, 13, 11, 00, 00));
+            //var data = await client.For<TransactionLine>().Select(fields).Where(filter).GetAllModifiedAfterAsync(new DateTime(2017, 1, 13, 11, 00, 00));
 
-            foreach (var d in data)
+            //foreach (var d in data)
+            //{
+            //    Console.WriteLine($"{d.Created} | {d.Modified}");
+            //}
+
+            //var fields = ReflectionHelper.GetAllProperties<ReportingBalance>();
+            //string filter = string.Format("ReportingYear eq {0} and BalanceType eq 'W'", 2015);
+            //var result = await client.For<ReportingBalance>().Where(filter).Select(fields).GetAllAsync();
+
+            var defaultMailbox = await client.GetDefaultMailbox();
+
+            var msg = await client.For<MailMessage>().InsertAsync(new MailMessage
             {
-                Console.WriteLine($"{d.Created} | {d.Modified}");
-            }
-
-            //var defaultMailbox = await client.GetDefaultMailbox();
+                RecipientMailboxID = defaultMailbox.ID,
+                SenderMailboxID = defaultMailbox.ID,
+                Type = 1000,
+                Subject = "test"
+            });
 
             // Create the mail
             // Type 1000 = Inkoop factuur

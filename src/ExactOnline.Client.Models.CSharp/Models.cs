@@ -4188,6 +4188,7 @@ namespace ExactOnline.Client.Models
         public string BankAccount { get; set; }
         ///<![CDATA[Creation date]]>
         [SDKFieldType(FieldType.ReadOnly)]
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public DateTime Created { get; set; }
         ///<![CDATA[User ID of creator]]>
         [SDKFieldType(FieldType.ReadOnly)]
@@ -4201,6 +4202,7 @@ namespace ExactOnline.Client.Models
         public Guid ID { get; set; }
         ///<![CDATA[Last modified date]]>
         [SDKFieldType(FieldType.ReadOnly)]
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public DateTime Modified { get; set; }
         ///<![CDATA[User ID of modifier]]>
         [SDKFieldType(FieldType.ReadOnly)]
